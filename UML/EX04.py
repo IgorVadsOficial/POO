@@ -1,460 +1,226 @@
-from __future__ import annotations
+# Exercício 4 - Empresa Aérea com interface de interação com o usuário
+# Programa de console: o usuário escolhe opções num menu digitando números.
 
 
-class Pessoa:
-    def __init__(self, codigo: int, nome: str):
-        self._codigo = codigo
-        self._nome = nome
-
-    @property
-    def codigo(self):
-        return self._codigo
-
-    @property
-    def nome(self):
-        return self._nome
-
-    def __str__(self):
-        return f"{self._nome}"
-
-
-class Funcionario(Pessoa):
-    def __init__(self, codigo: int, nome: str, cargo: str):
-        super().__init__(codigo, nome)
-        self._cargo = cargo
-
-    @property
-    def cargo(self):
-        return self._cargo
-
-
-class Operador(Funcionario):
-    def __init__(self, codigo: int, nome: str, cargo: str = "Operador"):
-        super().__init__(codigo, nome, cargo)
-
-    def criar_reserva(
-        self, voo: "Voo", passageiro: "Passageiro", empresa: "EmpresaAerea"
-    ):
-        return empresa.criar_reserva(voo, passageiro, self)
-
-    def cancelar_reserva(self, reserva: "Reserva", empresa: "EmpresaAerea"):
-        empresa.cancelar_reserva(reserva)
-
-
-class Passageiro(Pessoa):
-    def __init__(self, codigo: int, nome: str):
-        super().__init__(codigo, nome)
-        self._reservas = []
-
-    @property
-    def reservas(self):
-        return self._reservas
-
-    def criar_reserva(self, voo: "Voo", empresa: "EmpresaAerea"):
-        return empresa.criar_reserva(voo, self, None)
-
-    def cancelar_reserva(self, reserva: "Reserva", empresa: "EmpresaAerea"):
-        empresa.cancelar_reserva(reserva)
-
-    def pagar_reserva(self, reserva: "Reserva"):
-        reserva.pagar()
-
+# ======================================================================
+# CLASSES (seguem o diagrama UML)
+# ======================================================================
 
 class Aeroporto:
-    def __init__(self, nome: str, cidade: str, capacidade_decolagens_por_hora: int):
-        self._nome = nome
-        self._cidade = cidade
-        self._capacidade_decolagens_por_hora = capacidade_decolagens_por_hora
+    """Representa um aeroporto (usado como partida ou destino de um voo)."""
 
-    @property
-    def nome(self):
-        return self._nome
+    def __init__(self, nome, cidade, pais, capacidade):
+        self.nome = nome
+        self.cidade = cidade
+        self.pais = pais
+        self.capacidade = capacidade  # decolagens por hora
 
-    @property
-    def cidade(self):
-        return self._cidade
 
-    @property
-    def capacidade_decolagens_por_hora(self):
-        return self._capacidade_decolagens_por_hora
+class Aeroviario:
+    """Funcionário que faz parte da tripulação de um voo."""
 
-    def __str__(self):
-        return f"{self._nome} ({self._cidade})"
+    def __init__(self, nome, funcao):
+        self.nome = nome
+        self.funcao = funcao  # ex.: Piloto, Comissário
 
 
 class Reserva:
-    def __init__(
-        self,
-        codigo: int,
-        voo: "Voo",
-        passageiro: Passageiro,
-        operador: Operador | None = None,
-    ):
-        self._codigo = codigo
-        self._voo = voo
-        self._passageiro = passageiro
-        self._operador = operador
-        self._status = "ativa"
+    """Reserva de um passageiro em um voo."""
 
-    @property
-    def codigo(self):
-        return self._codigo
+    contador = 0  # atributo da classe: conta quantas reservas já foram criadas
 
-    @property
-    def voo(self):
-        return self._voo
-
-    @property
-    def passageiro(self):
-        return self._passageiro
-
-    @property
-    def operador(self):
-        return self._operador
-
-    @property
-    def status(self):
-        return self._status
-
-    def pagar(self):
-        if self._status == "cancelada":
-            raise ValueError("Não é possível pagar uma reserva cancelada.")
-        self._status = "paga"
-        return True
-
-    def cancelar(self):
-        if self._status == "cancelada":
-            return False
-        self._status = "cancelada"
-        self._voo.remover_reserva(self)
-        return True
-
-    def __str__(self):
-        return f"Reserva #{self._codigo} - {self._passageiro.nome} - {self._voo.codigo} - {self._status}"
+    def __init__(self, voo, passageiro):
+        Reserva.contador += 1
+        self.codigo = f"R{Reserva.contador}"  # gera R1, R2, R3...
+        self.paga = False                     # toda reserva começa como não paga
+        self.voo = voo                        # cada reserva pertence a um voo
+        self.passageiro = passageiro          # e possui um passageiro
 
 
 class Voo:
-    def __init__(
-        self,
-        codigo: str,
-        horario: str,
-        data: str,
-        aeroporto_origem: Aeroporto,
-        aeroporto_destino: Aeroporto,
-        tipo: str,
-        total_assentos: int,
-    ):
-        self._codigo = codigo
-        self._horario = horario
-        self._data = data
-        self._aeroporto_origem = aeroporto_origem
-        self._aeroporto_destino = aeroporto_destino
-        self._tipo = tipo
-        self._total_assentos = total_assentos
-        self._assentos_livres = total_assentos
-        self._tripulacao = []
-        self._reservas = []
+    """Voo com horário, data, aeroportos, tripulação e lista de reservas."""
 
-    @property
-    def codigo(self):
-        return self._codigo
+    def __init__(self, codigo, horario, data, partida, destino, assentos, tripulacao):
+        self.codigo = codigo
+        self.horario = horario
+        self.data = data
+        self.partida = partida        # objeto Aeroporto
+        self.destino = destino        # objeto Aeroporto
+        self.assentos = assentos      # total de assentos do voo
+        self.tripulacao = tripulacao  # lista de Aeroviario
+        self.reservas = []            # um voo tem várias reservas (0..*)
 
-    @property
-    def horario(self):
-        return self._horario
-
-    @property
-    def data(self):
-        return self._data
-
-    @property
-    def aeroporto_origem(self):
-        return self._aeroporto_origem
-
-    @property
-    def aeroporto_destino(self):
-        return self._aeroporto_destino
-
-    @property
-    def tipo(self):
-        return self._tipo
-
-    @property
-    def tripulacao(self):
-        return self._tripulacao
-
-    @property
     def assentos_livres(self):
-        return self._assentos_livres
+        # assentos totais menos os já reservados
+        return self.assentos - len(self.reservas)
 
-    @property
-    def reservas(self):
-        return self._reservas
+    def get_tripulacao(self):
+        return self.tripulacao
 
-    def adicionar_tripulante(self, funcionario: Funcionario):
-        if funcionario not in self._tripulacao:
-            self._tripulacao.append(funcionario)
-
-    def remover_tripulante(self, funcionario: Funcionario):
-        if funcionario in self._tripulacao:
-            self._tripulacao.remove(funcionario)
-
-    def adicionar_reserva(self, reserva: Reserva):
-        if self._assentos_livres <= 0:
-            raise ValueError("Não há assentos disponíveis para este voo.")
-        self._reservas.append(reserva)
-        self._assentos_livres -= 1
-
-    def remover_reserva(self, reserva: Reserva):
-        if reserva in self._reservas:
-            self._reservas.remove(reserva)
-            self._assentos_livres += 1
-
-    def __str__(self):
-        return (
-            f"Voo {self._codigo} - {self._data} às {self._horario} - "
-            f"{self._aeroporto_origem} -> {self._aeroporto_destino} "
-            f"({self._tipo}) - Assentos livres: {self._assentos_livres}"
-        )
+    def get_tipo(self):
+        # se os dois aeroportos estão no mesmo país, o voo é nacional
+        return "Nacional" if self.partida.pais == self.destino.pais else "Internacional"
 
 
-class EmpresaAerea:
-    def __init__(self):
-        self._aeroportos = []
-        self._voos = []
-        self._passageiros = []
-        self._operadores = []
-        self._reservas = []
+class Passageiro:
+    """Pessoa que compra voos: pode criar, cancelar e pagar reservas."""
 
-    @property
-    def aeroportos(self):
-        return self._aeroportos
+    def __init__(self, nome, cpf):
+        self.nome = nome
+        self.cpf = cpf
 
-    @property
-    def voos(self):
-        return self._voos
-
-    @property
-    def passageiros(self):
-        return self._passageiros
-
-    @property
-    def operadores(self):
-        return self._operadores
-
-    @property
-    def reservas(self):
-        return self._reservas
-
-    def cadastrar_aeroporto(self, nome: str, cidade: str, capacidade: int):
-        aeroporto = Aeroporto(nome, cidade, capacidade)
-        self._aeroportos.append(aeroporto)
-        return aeroporto
-
-    def cadastrar_voo(
-        self,
-        codigo: str,
-        horario: str,
-        data: str,
-        origem: Aeroporto,
-        destino: Aeroporto,
-        tipo: str,
-        total_assentos: int,
-    ):
-        voo = Voo(codigo, horario, data, origem, destino, tipo, total_assentos)
-        self._voos.append(voo)
-        return voo
-
-    def cadastrar_passageiro(self, codigo: int, nome: str):
-        passageiro = Passageiro(codigo, nome)
-        self._passageiros.append(passageiro)
-        return passageiro
-
-    def cadastrar_operador(self, codigo: int, nome: str, cargo: str = "Operador"):
-        operador = Operador(codigo, nome, cargo)
-        self._operadores.append(operador)
-        return operador
-
-    def criar_reserva(
-        self, voo: Voo, passageiro: Passageiro, operador: Operador | None = None
-    ):
-        if voo is None or passageiro is None:
-            raise ValueError("Voo e passageiro são obrigatórios.")
-        if voo.assentos_livres <= 0:
-            raise ValueError("Voo sem assentos disponíveis.")
-
-        reserva = Reserva(len(self._reservas) + 1, voo, passageiro, operador)
-        voo.adicionar_reserva(reserva)
-        passageiro.reservas.append(reserva)
-        self._reservas.append(reserva)
+    def criar_reserva(self, voo):
+        if voo.assentos_livres() == 0:
+            return None                      # voo lotado, não cria a reserva
+        reserva = Reserva(voo, self)
+        voo.reservas.append(reserva)         # registra a reserva dentro do voo
         return reserva
 
-    def cancelar_reserva(self, reserva: Reserva):
-        if reserva in self._reservas:
-            reserva.cancelar()
-            self._reservas.remove(reserva)
-            return True
-        raise ValueError("Reserva não encontrada.")
+    def cancelar_reserva(self, reserva):
+        reserva.voo.reservas.remove(reserva)  # tira a reserva do voo
 
-    def listar_voos(self):
-        for voo in self._voos:
-            print(voo)
-
-    def listar_reservas(self):
-        for reserva in self._reservas:
-            print(reserva)
+    def pagar_reserva(self, reserva):
+        reserva.paga = True
 
 
-def mostrar_menu():
-    print("\n=== Sistema de Empresa Aérea ===")
-    print("1 - Cadastrar aeroporto")
-    print("2 - Cadastrar voo")
-    print("3 - Cadastrar passageiro")
-    print("4 - Cadastrar operador")
-    print("5 - Criar reserva")
-    print("6 - Pagar reserva")
-    print("7 - Cancelar reserva")
-    print("8 - Listar voos")
-    print("9 - Listar reservas")
-    print("0 - Sair")
+class Operador:
+    """Funcionário que cria e cancela reservas em nome dos passageiros."""
+
+    def __init__(self, nome, matricula):
+        self.nome = nome
+        self.matricula = matricula
+
+    def criar_reserva(self, voo, passageiro):
+        # reaproveita a lógica do passageiro
+        return passageiro.criar_reserva(voo)
+
+    def cancelar_reserva(self, reserva):
+        reserva.passageiro.cancelar_reserva(reserva)
 
 
-def executar_menu():
-    empresa = EmpresaAerea()
+# ======================================================================
+# DADOS DE EXEMPLO (já deixam o sistema pronto para testar)
+# ======================================================================
 
+natal = Aeroporto("Augusto Severo", "Natal", "Brasil", 20)
+sao_paulo = Aeroporto("Guarulhos", "Sao Paulo", "Brasil", 60)
+lisboa = Aeroporto("Humberto Delgado", "Lisboa", "Portugal", 40)
+
+equipe = [Aeroviario("Ana", "Piloto"), Aeroviario("Bruno", "Comissario")]
+
+# Voo(codigo, horario, data, partida, destino, assentos, tripulacao)
+voos = [
+    Voo("V100", "08:00", "20/11/2026", natal, sao_paulo, 3, equipe),
+    Voo("V200", "22:30", "25/11/2026", sao_paulo, lisboa, 2, equipe),
+]
+
+passageiros = {}  # dicionário {cpf: Passageiro} com quem já usou o sistema
+
+
+# ======================================================================
+# FUNÇÕES AUXILIARES DA INTERFACE
+# ======================================================================
+
+def obter_passageiro(cpf):
+    # se o CPF ainda não existe, pede o nome e cadastra o passageiro
+    if cpf not in passageiros:
+        passageiros[cpf] = Passageiro(input("Nome: "), cpf)
+    return passageiros[cpf]
+
+
+def escolher_voo():
+    # pede o código e procura o voo; devolve None se não achar
+    codigo = input("Codigo do voo: ").upper()
+    return next((v for v in voos if v.codigo == codigo), None)
+
+
+def achar_reserva(codigo):
+    # procura a reserva em todos os voos; devolve None se não achar
+    for v in voos:
+        for r in v.reservas:
+            if r.codigo == codigo.upper():
+                return r
+    return None
+
+
+def listar_voos():
+    for v in voos:
+        print(f"{v.codigo} | {v.get_tipo()} | {v.partida.cidade} -> {v.destino.cidade} | "
+              f"{v.data} {v.horario} | livres: {v.assentos_livres()} | "
+              f"tripulacao: {', '.join(a.nome for a in v.get_tripulacao())}")
+
+
+def listar_reservas():
+    for v in voos:
+        for r in v.reservas:
+            print(f"{r.codigo} | {v.codigo} | {r.passageiro.nome} | {'paga' if r.paga else 'nao paga'}")
+
+
+# ======================================================================
+# MENU PRINCIPAL DE CADA TIPO DE USUÁRIO
+# ======================================================================
+
+def menu(usuario, e_operador):
+    # o mesmo menu serve para passageiro e operador; só mudam algumas opções
     while True:
-        mostrar_menu()
-        opcao = input("Escolha uma opção: ")
+        print("\n1-Listar voos  2-Criar reserva  3-Cancelar reserva", end="")
+        print("  4-Listar reservas  0-Sair" if e_operador else "  4-Pagar reserva  5-Minhas reservas  0-Sair")
+        op = input("> ")
 
-        if opcao == "0":
-            print("Sistema encerrado.")
+        if op == "0":                         # sair do menu
             break
 
-        elif opcao == "1":
-            nome = input("Nome do aeroporto: ")
-            cidade = input("Cidade: ")
-            capacidade = int(input("Capacidade de decolagens por hora: "))
-            empresa.cadastrar_aeroporto(nome, cidade, capacidade)
-            print("Aeroporto cadastrado com sucesso.")
+        elif op == "1":                       # listar voos
+            listar_voos()
 
-        elif opcao == "2":
-            codigo = input("Código do voo: ")
-            horario = input("Horário do voo: ")
-            data = input("Data do voo: ")
-            origem = input("Aeroporto de origem: ")
-            destino = input("Aeroporto de destino: ")
-            tipo = input("Tipo do voo (nacional/internacional): ")
-            assentos = int(input("Quantidade de assentos: "))
-
-            aeroporto_origem = next(
-                (a for a in empresa.aeroportos if a.nome.lower() == origem.lower()),
-                None,
-            )
-            aeroporto_destino = next(
-                (a for a in empresa.aeroportos if a.nome.lower() == destino.lower()),
-                None,
-            )
-
-            if aeroporto_origem is None or aeroporto_destino is None:
-                print("Aeroportos informados não foram encontrados.")
+        elif op == "2":                       # criar reserva
+            voo = escolher_voo()
+            if not voo:
+                print("Voo nao encontrado.")
                 continue
-
-            empresa.cadastrar_voo(
-                codigo,
-                horario,
-                data,
-                aeroporto_origem,
-                aeroporto_destino,
-                tipo,
-                assentos,
-            )
-            print("Voo cadastrado com sucesso.")
-
-        elif opcao == "3":
-            codigo = int(input("Código do passageiro: "))
-            nome = input("Nome do passageiro: ")
-            empresa.cadastrar_passageiro(codigo, nome)
-            print("Passageiro cadastrado com sucesso.")
-
-        elif opcao == "4":
-            codigo = int(input("Código do operador: "))
-            nome = input("Nome do operador: ")
-            cargo = input("Cargo: ")
-            empresa.cadastrar_operador(codigo, nome, cargo)
-            print("Operador cadastrado com sucesso.")
-
-        elif opcao == "5":
-            codigo_voo = input("Código do voo: ")
-            voo = next(
-                (v for v in empresa.voos if v.codigo.lower() == codigo_voo.lower()),
-                None,
-            )
-            if voo is None:
-                print("Voo não encontrado.")
-                continue
-
-            codigo_passageiro = int(input("Código do passageiro: "))
-            passageiro = next(
-                (p for p in empresa.passageiros if p.codigo == codigo_passageiro), None
-            )
-            if passageiro is None:
-                print("Passageiro não encontrado.")
-                continue
-
-            operador = None
-            if empresa.operadores:
-                print("Operadores disponíveis:")
-                for op in empresa.operadores:
-                    print(f"{op.codigo} - {op.nome}")
-                codigo_operador = input(
-                    "Código do operador (opcional, deixe em branco para ignorar): "
-                )
-                if codigo_operador.strip():
-                    operador = next(
-                        (
-                            op
-                            for op in empresa.operadores
-                            if op.codigo == int(codigo_operador)
-                        ),
-                        None,
-                    )
-
-            reserva = empresa.criar_reserva(voo, passageiro, operador)
-            print(f"Reserva criada: {reserva}")
-
-        elif opcao == "6":
-            codigo = int(input("Código da reserva: "))
-            reserva = next((r for r in empresa.reservas if r.codigo == codigo), None)
-            if reserva is None:
-                print("Reserva não encontrada.")
-                continue
-            reserva.pagar()
-            print(f"Reserva paga: {reserva}")
-
-        elif opcao == "7":
-            codigo = int(input("Código da reserva: "))
-            reserva = next((r for r in empresa.reservas if r.codigo == codigo), None)
-            if reserva is None:
-                print("Reserva não encontrada.")
-                continue
-            empresa.cancelar_reserva(reserva)
-            print(f"Reserva cancelada: {reserva}")
-
-        elif opcao == "8":
-            if not empresa.voos:
-                print("Nenhum voo cadastrado.")
+            if e_operador:
+                # operador cria a reserva para um passageiro (identificado pelo CPF)
+                reserva = usuario.criar_reserva(voo, obter_passageiro(input("CPF do passageiro: ")))
             else:
-                empresa.listar_voos()
+                # passageiro cria a reserva para si mesmo
+                reserva = usuario.criar_reserva(voo)
+            print(f"Reserva {reserva.codigo} criada." if reserva else "Voo lotado.")
 
-        elif opcao == "9":
-            if not empresa.reservas:
-                print("Nenhuma reserva cadastrada.")
+        elif op in ("3", "4") and not (op == "4" and e_operador):
+            # opção 3 (cancelar) para todos; opção 4 (pagar) só para passageiro
+            reserva = achar_reserva(input("Codigo da reserva: "))
+            # passageiro só mexe nas próprias reservas; operador mexe em qualquer uma
+            if not reserva or (not e_operador and reserva.passageiro is not usuario):
+                print("Reserva nao encontrada.")
+            elif op == "3":
+                usuario.cancelar_reserva(reserva)
+                print("Reserva cancelada.")
             else:
-                empresa.listar_reservas()
+                usuario.pagar_reserva(reserva)
+                print("Reserva paga.")
+
+        elif op == "4":                       # (operador) listar todas as reservas
+            listar_reservas()
+
+        elif op == "5" and not e_operador:    # (passageiro) listar só as suas reservas
+            for v in voos:
+                for r in v.reservas:
+                    if r.passageiro is usuario:
+                        print(f"{r.codigo} | {v.codigo} | {'paga' if r.paga else 'nao paga'}")
 
         else:
-            print("Opção inválida.")
+            print("Opcao invalida.")
 
 
-if __name__ == "__main__":
-    executar_menu()
+# ======================================================================
+# PROGRAMA PRINCIPAL: escolhe o tipo de usuário e abre o menu
+# ======================================================================
+
+while True:
+    tipo = input("\nEntrar como 1-Passageiro  2-Operador  0-Sair: ")
+    if tipo == "0":
+        break
+    elif tipo == "1":
+        menu(obter_passageiro(input("Seu CPF: ")), False)
+    elif tipo == "2":
+        menu(Operador(input("Nome: "), input("Matricula: ")), True)
