@@ -1,4 +1,3 @@
-
 class Aeroporto:
     def __init__(self, nome, cidade, pais, capacidade):
         self.__nome = nome
