@@ -56,7 +56,8 @@ class Voo:
     def getTipo(self):
         if self.__partida.getPais() == self.__destino.getPais():
             return "NACIONAL"
-        return "INTERNACIONAL"
+        else:
+            return "INTERNACIONAL"
 
     def getReservas(self):
         return self.__reservas
