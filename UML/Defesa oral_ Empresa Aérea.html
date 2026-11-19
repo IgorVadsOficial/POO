@@ -38,14 +38,14 @@ th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertic
 .dg .tl{fill:rgba(31,138,117,.16);stroke:#1f8a75;stroke-width:.8}
 .dg .pu{fill:rgba(91,79,176,.16);stroke:#7a6fd0;stroke-width:.8}
 .dg .dv{stroke:#888780;stroke-width:.5}
-.dg .ln{stroke:var(--fg);stroke-width:1.2}
+.dg .ln{stroke:var(--fg);stroke-width:1.2;fill:none}
 .dg .n{font-weight:700;fill:var(--acc)}
 </style>
 </head>
 <body>
 <main>
 <h1>Empresa Aérea: material de defesa</h1>
-<p class="sub">Entenda cada parte e depois treine as falas em voz alta.</p>
+<p class="sub">Diagrama igual ao código final. Entenda cada parte e depois treine as falas em voz alta.</p>
 <nav role="tablist">
 <button role="tab" aria-selected="true" data-t="uml">UML parte por parte</button>
 <button role="tab" aria-selected="false" data-t="cod">Código parte por parte</button>
@@ -55,37 +55,45 @@ th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertic
 
 <section id="uml" class="on">
 <h2>O diagrama</h2>
-<svg class="dg" viewBox="0 0 680 430" role="img" aria-label="Diagrama de classes da empresa aérea">
-<line class="ln" x1="180" y1="60" x2="260" y2="60"/><text class="n" x="186" y="52">1</text><text class="n" x="254" y="52" text-anchor="end">0..*</text>
-<line class="ln" x1="420" y1="60" x2="500" y2="60"/><text class="n" x="426" y="52">0..*</text><text class="n" x="494" y="52" text-anchor="end">0..1</text>
-<line class="ln" x1="340" y1="94" x2="340" y2="200"/><text class="n" x="348" y="112">0..*</text><text class="n" x="348" y="190">1</text>
-<line class="ln" x1="260" y1="240" x2="180" y2="240"/><text x="220" y="231" text-anchor="middle">partida</text>
-<line class="ln" x1="260" y1="270" x2="180" y2="270"/><text x="220" y="261" text-anchor="middle">destino</text>
-<line class="ln" x1="420" y1="250" x2="500" y2="250"/><text x="460" y="241" text-anchor="middle">tripulação</text>
-<rect class="tl" x="20" y="20" width="160" height="138" rx="4"/><line class="dv" x1="20" y1="48" x2="180" y2="48"/><line class="dv" x1="20" y1="94" x2="180" y2="94"/>
-<text class="h" x="100" y="34" text-anchor="middle" dominant-baseline="central">Passageiro</text>
-<text x="30" y="62" dominant-baseline="central">- nome : String</text><text x="30" y="80" dominant-baseline="central">- cpf : String</text>
-<text x="30" y="108" dominant-baseline="central">+ criarReserva()</text><text x="30" y="126" dominant-baseline="central">+ cancelarReserva()</text><text x="30" y="144" dominant-baseline="central">+ pagarReserva()</text>
-<rect class="pu" x="260" y="20" width="160" height="74" rx="4"/><line class="dv" x1="260" y1="48" x2="420" y2="48"/>
-<text class="h" x="340" y="34" text-anchor="middle" dominant-baseline="central">Reserva</text>
-<text x="270" y="62" dominant-baseline="central">- codigo : String</text><text x="270" y="80" dominant-baseline="central">- paga : boolean</text>
-<rect class="tl" x="500" y="20" width="160" height="120" rx="4"/><line class="dv" x1="500" y1="48" x2="660" y2="48"/><line class="dv" x1="500" y1="94" x2="660" y2="94"/>
-<text class="h" x="580" y="34" text-anchor="middle" dominant-baseline="central">Operador</text>
-<text x="510" y="62" dominant-baseline="central">- nome : String</text><text x="510" y="80" dominant-baseline="central">- matricula : String</text>
-<text x="510" y="108" dominant-baseline="central">+ criarReserva()</text><text x="510" y="126" dominant-baseline="central">+ cancelarReserva()</text>
-<rect class="pu" x="20" y="200" width="160" height="110" rx="4"/><line class="dv" x1="20" y1="228" x2="180" y2="228"/>
-<text class="h" x="100" y="214" text-anchor="middle" dominant-baseline="central">Aeroporto</text>
-<text x="30" y="242" dominant-baseline="central">- nome : String</text><text x="30" y="260" dominant-baseline="central">- cidade : String</text><text x="30" y="278" dominant-baseline="central">- pais : String</text><text x="30" y="296" dominant-baseline="central">- capacidade : int</text>
-<rect class="pu" x="260" y="200" width="160" height="156" rx="4"/><line class="dv" x1="260" y1="228" x2="420" y2="228"/><line class="dv" x1="260" y1="292" x2="420" y2="292"/>
-<text class="h" x="340" y="214" text-anchor="middle" dominant-baseline="central">Voo</text>
-<text x="270" y="242" dominant-baseline="central">- codigo : String</text><text x="270" y="260" dominant-baseline="central">- horario : Time</text><text x="270" y="278" dominant-baseline="central">- data : Date</text>
-<text x="270" y="306" dominant-baseline="central">+ assentosLivres()</text><text x="270" y="324" dominant-baseline="central">+ getTripulacao()</text><text x="270" y="342" dominant-baseline="central">+ getTipo() : String</text>
-<rect class="tl" x="500" y="200" width="160" height="74" rx="4"/><line class="dv" x1="500" y1="228" x2="660" y2="228"/>
-<text class="h" x="580" y="214" text-anchor="middle" dominant-baseline="central">Aeroviario</text>
-<text x="510" y="242" dominant-baseline="central">- nome : String</text><text x="510" y="260" dominant-baseline="central">- funcao : String</text>
-<rect class="tl" x="20" y="394" width="16" height="16" rx="3"/><text x="44" y="402" dominant-baseline="central">Pessoas</text>
-<rect class="pu" x="120" y="394" width="16" height="16" rx="3"/><text x="144" y="402" dominant-baseline="central">Demais classes</text>
-<text class="n" x="270" y="402" dominant-baseline="central">Números em azul = multiplicidade</text>
+<svg class="dg" viewBox="0 0 680 840" role="img" aria-label="Diagrama de classes igual ao código">
+<path class="ln" d="M130 194 V300 H240"/><text class="n" x="136" y="212">1</text><text class="n" x="234" y="294" text-anchor="end">0..*</text>
+<path class="ln" d="M530 158 V300 H440"/><text class="n" x="536" y="176">0..1</text><text class="n" x="446" y="294">0..*</text>
+<line class="ln" x1="340" y1="460" x2="340" y2="520"/><text class="n" x="348" y="478">0..*</text><text class="n" x="348" y="512">1</text>
+<line class="ln" x1="240" y1="580" x2="170" y2="580"/><text x="205" y="573" text-anchor="middle">partida</text>
+<line class="ln" x1="240" y1="620" x2="170" y2="620"/><text x="205" y="613" text-anchor="middle">destino</text>
+<line class="ln" x1="440" y1="600" x2="510" y2="600"/><text x="475" y="593" text-anchor="middle">tripulação</text>
+
+<rect class="tl" x="20" y="20" width="220" height="174" rx="4"/><line class="dv" x1="20" y1="48" x2="240" y2="48"/><line class="dv" x1="20" y1="112" x2="240" y2="112"/>
+<text class="h" x="130" y="34" text-anchor="middle" dominant-baseline="central">Passageiro</text>
+<text x="30" y="62" dominant-baseline="central">- nome : String</text><text x="30" y="80" dominant-baseline="central">- cpf : String</text><text x="30" y="98" dominant-baseline="central">- reservas : Reserva[]</text>
+<text x="30" y="126" dominant-baseline="central">+ criarReserva(voo, operador)</text><text x="30" y="144" dominant-baseline="central">+ cancelarReserva(reserva)</text><text x="30" y="162" dominant-baseline="central">+ pagarReserva(reserva)</text><text x="30" y="180" dominant-baseline="central">+ getReservas()</text>
+
+<rect class="tl" x="400" y="20" width="260" height="138" rx="4"/><line class="dv" x1="400" y1="48" x2="660" y2="48"/><line class="dv" x1="400" y1="112" x2="660" y2="112"/>
+<text class="h" x="530" y="34" text-anchor="middle" dominant-baseline="central">Operador</text>
+<text x="410" y="62" dominant-baseline="central">- nome : String</text><text x="410" y="80" dominant-baseline="central">- matricula : String</text><text x="410" y="98" dominant-baseline="central">- reservas : Reserva[]</text>
+<text x="410" y="126" dominant-baseline="central">+ criarReserva(passageiro, voo)</text><text x="410" y="144" dominant-baseline="central">+ cancelarReserva(passageiro, reserva)</text>
+
+<rect class="pu" x="240" y="250" width="200" height="210" rx="4"/><line class="dv" x1="240" y1="278" x2="440" y2="278"/><line class="dv" x1="240" y1="378" x2="440" y2="378"/>
+<text class="h" x="340" y="264" text-anchor="middle" dominant-baseline="central">Reserva</text>
+<text x="250" y="292" dominant-baseline="central">- codigo : String</text><text x="250" y="310" dominant-baseline="central">- paga : boolean</text><text x="250" y="328" dominant-baseline="central">- passageiro : Passageiro</text><text x="250" y="346" dominant-baseline="central">- voo : Voo</text><text x="250" y="364" dominant-baseline="central">- operador : Operador</text>
+<text x="250" y="392" dominant-baseline="central">+ getCodigo()</text><text x="250" y="410" dominant-baseline="central">+ getPaga()</text><text x="250" y="428" dominant-baseline="central">+ setPaga(paga)</text><text x="250" y="446" dominant-baseline="central">+ getVoo()</text>
+
+<rect class="pu" x="240" y="520" width="200" height="264" rx="4"/><line class="dv" x1="240" y1="548" x2="440" y2="548"/><line class="dv" x1="240" y1="702" x2="440" y2="702"/>
+<text class="h" x="340" y="534" text-anchor="middle" dominant-baseline="central">Voo</text>
+<text x="250" y="562" dominant-baseline="central">- codigo : String</text><text x="250" y="580" dominant-baseline="central">- horario : String</text><text x="250" y="598" dominant-baseline="central">- data : String</text><text x="250" y="616" dominant-baseline="central">- assentos : int</text><text x="250" y="634" dominant-baseline="central">- partida : Aeroporto</text><text x="250" y="652" dominant-baseline="central">- destino : Aeroporto</text><text x="250" y="670" dominant-baseline="central">- reservas : Reserva[]</text><text x="250" y="688" dominant-baseline="central">- tripulacao : Aeroviario[]</text>
+<text x="250" y="716" dominant-baseline="central">+ assentosLivres() : int</text><text x="250" y="734" dominant-baseline="central">+ getTripulacao()</text><text x="250" y="752" dominant-baseline="central">+ getTipo() : String</text><text x="250" y="770" dominant-baseline="central">+ getReservas()</text>
+
+<rect class="pu" x="20" y="540" width="150" height="138" rx="4"/><line class="dv" x1="20" y1="568" x2="170" y2="568"/><line class="dv" x1="20" y1="650" x2="170" y2="650"/>
+<text class="h" x="95" y="554" text-anchor="middle" dominant-baseline="central">Aeroporto</text>
+<text x="30" y="582" dominant-baseline="central">- nome : String</text><text x="30" y="600" dominant-baseline="central">- cidade : String</text><text x="30" y="618" dominant-baseline="central">- pais : String</text><text x="30" y="636" dominant-baseline="central">- capacidade : int</text><text x="30" y="664" dominant-baseline="central">+ getPais()</text>
+
+<rect class="tl" x="510" y="540" width="150" height="120" rx="4"/><line class="dv" x1="510" y1="568" x2="660" y2="568"/><line class="dv" x1="510" y1="614" x2="660" y2="614"/>
+<text class="h" x="585" y="554" text-anchor="middle" dominant-baseline="central">Aeroviario</text>
+<text x="520" y="582" dominant-baseline="central">- nome : String</text><text x="520" y="600" dominant-baseline="central">- funcao : String</text><text x="520" y="628" dominant-baseline="central">+ getNome()</text><text x="520" y="646" dominant-baseline="central">+ getFuncao()</text>
+
+<rect class="tl" x="20" y="812" width="16" height="16" rx="3"/><text x="44" y="820" dominant-baseline="central">Pessoas</text>
+<rect class="pu" x="120" y="812" width="16" height="16" rx="3"/><text x="144" y="820" dominant-baseline="central">Demais classes</text>
+<text class="n" x="270" y="820" dominant-baseline="central">Números em azul = multiplicidade</text>
 </svg>
 
 <h2>Parte 1: como ler uma caixa</h2>
@@ -95,6 +103,7 @@ th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertic
 <tr><td><code>-</code></td><td>privado: só a própria classe acessa</td><td>dois underscores: <code>__nome</code></td></tr>
 <tr><td><code>+</code></td><td>público: qualquer classe acessa</td><td>sem underscore: <code>criarReserva()</code></td></tr>
 </table></div>
+<p>Depois dos dois pontos vem o <b>tipo</b>: <code>nome : String</code> é um texto, <code>assentos : int</code> um número inteiro e <code>Reserva[]</code> uma lista de reservas.</p>
 
 <h2>Parte 2: o que são os números sobre as linhas?</h2>
 <p>É a <b>multiplicidade</b>: quantos objetos de uma classe podem se ligar a um objeto da outra. A regra: <b>o número perto de uma classe diz quantos objetos dessa classe se ligam a um único objeto da classe do outro lado</b>.</p>
@@ -114,18 +123,19 @@ th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertic
 <p>As linhas de <i>partida</i>, <i>destino</i> e <i>tripulação</i> não têm número escrito. Na prática: um voo tem um aeroporto de partida, um de destino e vários aeroviários.</p>
 
 <h2>Parte 3: as seis classes</h2>
-<div class="q"><b>Passageiro</b>Atributos <code>nome</code> e <code>cpf</code>. Métodos: <code>criarReserva()</code>, <code>cancelarReserva()</code>, <code>pagarReserva()</code>. É o único que paga.</div>
-<div class="q"><b>Operador</b>Atributos <code>nome</code> e <code>matricula</code>. Métodos: <code>criarReserva()</code> e <code>cancelarReserva()</code>. Funcionário da empresa, não paga.</div>
-<div class="q"><b>Reserva</b>Atributos <code>codigo</code> e <code>paga</code>. Sem métodos: é o registro que liga passageiro e voo.</div>
-<div class="q"><b>Voo</b>Atributos <code>codigo</code>, <code>horario</code>, <code>data</code>. Métodos: <code>assentosLivres()</code>, <code>getTripulacao()</code>, <code>getTipo()</code> (nacional ou internacional).</div>
-<div class="q"><b>Aeroporto</b>Atributos <code>nome</code>, <code>cidade</code>, <code>pais</code>, <code>capacidade</code> (decolagens por hora: quantos aviões podem decolar em uma hora). O <code>pais</code> serve para o <code>getTipo()</code>.</div>
-<div class="q"><b>Aeroviario</b>Atributos <code>nome</code> e <code>funcao</code>. É cada tripulante do voo.</div>
+<div class="q"><b>Passageiro</b>Guarda <code>nome</code>, <code>cpf</code> e a lista <code>reservas</code>. Os métodos do enunciado são <code>criarReserva(voo, operador)</code>, <code>cancelarReserva(reserva)</code> e <code>pagarReserva(reserva)</code>. É o único que paga. <code>getReservas()</code> é de apoio.</div>
+<div class="q"><b>Operador</b>Guarda <code>nome</code>, <code>matricula</code> e as <code>reservas</code> que criou. Métodos: <code>criarReserva(passageiro, voo)</code> e <code>cancelarReserva(passageiro, reserva)</code>. Funcionário da empresa, não paga.</div>
+<div class="q"><b>Reserva</b>Guarda <code>codigo</code>, <code>paga</code> e as ligações com <code>passageiro</code>, <code>voo</code> e <code>operador</code>. Só tem métodos de apoio: <code>getCodigo()</code>, <code>getPaga()</code>, <code>setPaga(paga)</code> e <code>getVoo()</code>.</div>
+<div class="q"><b>Voo</b>Guarda <code>codigo</code>, <code>horario</code>, <code>data</code>, <code>assentos</code> (total do avião), os aeroportos <code>partida</code> e <code>destino</code>, e as listas <code>reservas</code> e <code>tripulacao</code>. Métodos: <code>assentosLivres()</code>, <code>getTripulacao()</code> e <code>getTipo()</code>, que diz se é nacional ou internacional. <code>getReservas()</code> é de apoio.</div>
+<div class="q"><b>Aeroporto</b>Guarda <code>nome</code>, <code>cidade</code>, <code>pais</code> e <code>capacidade</code> (decolagens por hora: quantos aviões podem decolar em uma hora). <code>getPais()</code> permite ao voo comparar os países.</div>
+<div class="q"><b>Aeroviario</b>Guarda <code>nome</code> e <code>funcao</code>. Tem <code>getNome()</code> e <code>getFuncao()</code>. É cada tripulante do voo.</div>
 
 <h2>Parte 4: decisões que o professor pode perguntar</h2>
 <div class="q"><b>Por que não há VooNacional e VooInternacional?</b>Teriam os mesmos atributos e métodos. Por isso o <code>Voo</code> decide sozinho com <code>getTipo()</code>, comparando o país da partida com o do destino.</div>
+<div class="q"><b>Por que há métodos get e set?</b>Os atributos são privados, então uma classe só lê a outra por esses métodos. Eles são de apoio: o diagrama mostra todos para ficar igual ao código.</div>
 <div class="q"><b>Por que Reserva é uma classe?</b>Tem dados próprios (código e pagamento) e liga passageiro, voo e operador.</div>
+<div class="q"><b>Por que horário e data são String?</b>O código não usa bibliotecas, então guarda os dois como texto.</div>
 <div class="q"><b>Que tipo de associação foi usada?</b>Associação simples: nenhum objeto deixa de existir se o outro sumir.</div>
-<div class="q"><b>O que o código tem que o diagrama não mostra?</b>O atributo <code>assentos</code> do <code>Voo</code> (sem ele não dá para calcular <code>assentosLivres()</code>) e os getters e setters, que a UML omite por convenção.</div>
 </section>
 
 <section id="cod">
@@ -194,7 +204,7 @@ perfil = input("1 = passageiro, 2 = operador: ")</pre>
 
 <h2>Perguntas prováveis</h2>
 <div class="q"><b>Por que os atributos têm dois underscores?</b>É o privado do Python, o <code>-</code> do diagrama. De fora, <code>p.__nome</code> dá erro.</div>
-<div class="q"><b>Por que há getters que não estão no diagrama?</b>A UML omite getters e setters por convenção. Eles só existem para uma classe ler o atributo privado da outra.</div>
+<div class="q"><b>Por que há getters e setters?</b>Para uma classe ler o atributo privado da outra.</div>
 <div class="q"><b>O código das reservas pode repetir?</b>Sim, se o passageiro cancelar uma e criar outra, porque o código usa o número de reservas dele. O menu escolhe pela posição na lista, então nada quebra.</div>
 <div class="q"><b>Limitações?</b>Os dados somem ao fechar, há um só voo e não há tratamento de entradas inválidas. É uma versão simples de propósito.</div>
 </section>
@@ -202,13 +212,12 @@ perfil = input("1 = passageiro, 2 = operador: ")</pre>
 <section id="fu">
 <h2>Fala completa: UML (cerca de 3 minutos)</h2>
 <div class="fala">
-<p>Bom dia, professor. Vou apresentar a modelagem em UML do sistema de reservas de uma empresa aérea.</p>
-<p>O diagrama tem seis classes. A classe central é Voo, com código, horário e data. Ela tem três métodos: assentosLivres, que informa quantos assentos ainda estão disponíveis, getTripulacao, que devolve a tripulação, e getTipo, que diz se o voo é nacional ou internacional.</p>
-<p>Cada voo se liga a dois aeroportos, o de partida e o de destino. O Aeroporto tem nome, cidade, país e capacidade de decolagens por hora, ou seja, quantos aviões podem decolar em uma hora. O país existe porque o getTipo compara o país de origem com o de destino: se forem iguais, o voo é nacional, e se forem diferentes, internacional. Por isso não criei subclasses de voo nacional e internacional, já que teriam os mesmos atributos e métodos.</p>
-<p>O voo também se associa à tripulação, formada por objetos da classe Aeroviario, com nome e função.</p>
-<p>Agora as multiplicidades, os números sobre as linhas. Entre Voo e Reserva, um voo tem zero ou muitas reservas, e cada reserva pertence a exatamente um voo. A Reserva tem código e uma indicação de pagamento.</p>
-<p>Existem dois tipos de usuário. O Passageiro, com nome e CPF, pode criar, cancelar e pagar reservas. Entre Passageiro e Reserva, um passageiro tem zero ou muitas reservas, e cada reserva tem exatamente um passageiro. O Operador, funcionário da empresa, com nome e matrícula, pode criar e cancelar reservas, mas não paga. Entre Operador e Reserva, um operador cria zero ou muitas reservas, e uma reserva tem no máximo um operador, porque o passageiro também reserva sozinho.</p>
-<p>Quanto à visibilidade, o sinal de menos indica atributos privados, e o de mais indica métodos públicos, o que garante o encapsulamento. Usei associações simples, porque nenhuma classe depende de outra para existir.</p>
+<p>Bom dia, professor. Vou apresentar o diagrama de classes do sistema de reservas de uma empresa aérea. Ele foi feito para ficar igual ao código que vou mostrar depois.</p>
+<p>São seis classes. A central é Voo, com código, horário, data e o total de assentos. Ela tem dois aeroportos associados, o de partida e o de destino, e duas listas: as reservas e a tripulação. Seus métodos são assentosLivres, que informa quantos assentos ainda estão disponíveis, getTripulacao, e getTipo, que diz se o voo é nacional ou internacional.</p>
+<p>O Aeroporto tem nome, cidade, país e capacidade de decolagens por hora, ou seja, quantos aviões podem decolar em uma hora. O país existe porque o getTipo compara o país de partida com o de destino: se forem iguais, o voo é nacional, e se forem diferentes, internacional. Por isso não criei subclasses de voo, que teriam os mesmos atributos e métodos. A tripulação é formada por objetos da classe Aeroviario, com nome e função.</p>
+<p>Agora as multiplicidades, os números sobre as linhas. Entre Voo e Reserva, um voo tem zero ou muitas reservas, e cada reserva pertence a exatamente um voo. A Reserva tem código, uma indicação de pagamento e guarda o passageiro, o voo e o operador.</p>
+<p>Há dois tipos de usuário. O Passageiro, com nome e CPF, pode criar, cancelar e pagar reservas. Entre Passageiro e Reserva, um passageiro tem zero ou muitas reservas, e cada reserva tem exatamente um passageiro. O Operador, funcionário da empresa, com nome e matrícula, pode criar e cancelar reservas, mas não paga. Entre Operador e Reserva, um operador cria zero ou muitas reservas, e uma reserva tem no máximo um operador, porque o passageiro também reserva sozinho.</p>
+<p>Quanto à visibilidade, o sinal de menos indica atributos privados e o de mais indica métodos públicos, o que garante o encapsulamento. Como os atributos são privados, as classes têm métodos get e set, para uma classe ler a outra. Usei associações simples, porque nenhuma classe depende de outra para existir.</p>
 <p>Em resumo, o diagrama atende aos requisitos do enunciado com o mínimo de classes necessárias. Fico à disposição para perguntas.</p>
 </div>
 </section>
@@ -216,11 +225,11 @@ perfil = input("1 = passageiro, 2 = operador: ")</pre>
 <section id="fc">
 <h2>Fala completa: código (cerca de 3 minutos)</h2>
 <div class="fala">
-<p>Agora vou apresentar a implementação em Python, que segue o diagrama que mostrei. O código não usa nenhuma biblioteca e tem três partes: as classes, a criação dos objetos e o menu.</p>
-<p>Cada classe do diagrama virou uma classe Python. Os atributos privados, marcados com sinal de menos, usam dois underscores, que é o privado do Python, e os métodos públicos não têm underscore. Como os atributos são privados, criei getters e setters para uma classe ler a outra. Eles não aparecem no diagrama porque a UML os omite por convenção.</p>
-<p>O Voo guarda duas listas, a de reservas e a de tripulação, e o total de assentos, único dado a mais em relação ao diagrama, necessário para calcular os assentos livres. O método assentosLivres subtrai o número de reservas do total. O getTipo compara o país do aeroporto de partida com o do destino e devolve nacional ou internacional.</p>
+<p>Agora vou apresentar a implementação em Python, que segue exatamente o diagrama que mostrei. O código não usa nenhuma biblioteca e tem três partes: as classes, a criação dos objetos e o menu.</p>
+<p>Cada classe do diagrama virou uma classe Python. Os atributos privados, marcados com sinal de menos, usam dois underscores, que é o privado do Python, e os métodos públicos não têm underscore. Como os atributos são privados, as classes têm getters e setters, para uma classe ler a outra.</p>
+<p>O Voo guarda duas listas, a de reservas e a de tripulação, e o total de assentos. O método assentosLivres subtrai o número de reservas do total. O getTipo compara o país do aeroporto de partida com o do destino e devolve nacional ou internacional.</p>
 <p>No Passageiro, o criarReserva verifica se há assento livre. Se não houver, devolve None. Se houver, cria a reserva com um código formado pela letra R e o número de reservas do passageiro mais um, e a guarda tanto na lista do voo quanto na dele, mantendo a associação do diagrama nos dois sentidos. O cancelar remove das duas listas, e o pagar marca a reserva como paga.</p>
-<p>O Operador reaproveita o criarReserva do passageiro, passando a si mesmo como operador, o que representa a associação de zero ou um operador por reserva. Assim a regra fica escrita em um só lugar. Ele não tem método de pagamento, conforme o enunciado.</p>
+<p>O Operador reaproveita o criarReserva do passageiro, passando a si mesmo como operador, o que representa a associação de zero ou um operador por reserva, e guarda a reserva na sua lista. Assim a regra fica escrita em um só lugar. Ele não tem método de pagamento, conforme o enunciado.</p>
 <p>Depois das classes, criei dois aeroportos, Natal e Lisboa, um voo entre eles com apenas dois assentos, para facilitar a demonstração do voo cheio, e um piloto na tripulação. Como os países são diferentes, o voo é internacional.</p>
 <p>No menu, o programa pede o nome do passageiro e pergunta se quem usa é o passageiro ou o operador. Essa escolha fica na variável perfil. Um laço while True mostra o tipo do voo, os assentos livres e as opções: reservar, cancelar, pagar, ver a tripulação e sair. Se o perfil for operador e tentar pagar, o sistema avisa que só o passageiro paga.</p>
 <p>Testei os dois perfis: reservar até o voo encher, pagar, cancelar e consultar a tripulação. Como limitação, os dados ficam só na memória e não há tratamento de entradas inválidas, para manter o código simples. Obrigado, e estou à disposição para perguntas.</p>

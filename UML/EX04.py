@@ -1,3 +1,6 @@
+from abc import ABC, abstractmethod
+
+
 class Aeroporto:
     def __init__(self, nome, cidade, pais, capacidade):
         self.__nome = nome
@@ -9,15 +12,27 @@ class Aeroporto:
         return self.__pais
 
 
-class Aeroviario:
-    def __init__(self, nome, funcao):
+class Funcionario(ABC):
+    def __init__(self, nome):
         self.__nome = nome
-        self.__funcao = funcao
 
     def getNome(self):
         return self.__nome
 
+    @abstractmethod
+    def getCargo(self):
+        pass
+
+
+class Aeroviario(Funcionario):
+    def __init__(self, nome, funcao):
+        super().__init__(nome)
+        self.__funcao = funcao
+
     def getFuncao(self):
+        return self.__funcao
+
+    def getCargo(self):
         return self.__funcao
 
 
@@ -30,19 +45,18 @@ class Voo:
         self.__destino = destino
         self.__assentos = assentos
         self.__reservas = []
-        self.__tripulacao = []
+        self.__tripulantes = []
 
     def assentosLivres(self):
         return self.__assentos - len(self.__reservas)
 
     def getTripulacao(self):
-        return self.__tripulacao
+        return self.__tripulantes
 
     def getTipo(self):
         if self.__partida.getPais() == self.__destino.getPais():
             return "NACIONAL"
-        else:
-            return "INTERNACIONAL"
+        return "INTERNACIONAL"
 
     def getReservas(self):
         return self.__reservas
@@ -94,9 +108,9 @@ class Passageiro:
         return self.__reservas
 
 
-class Operador:
+class Operador(Funcionario):
     def __init__(self, nome, matricula):
-        self.__nome = nome
+        super().__init__(nome)
         self.__matricula = matricula
         self.__reservas = []
 
@@ -111,6 +125,9 @@ class Operador:
         if reserva in self.__reservas:
             self.__reservas.remove(reserva)
 
+    def getCargo(self):
+        return "Operador"
+
 
 natal = Aeroporto("Aeroporto de Natal", "Natal", "Brasil", 20)
 lisboa = Aeroporto("Humberto Delgado", "Lisboa", "Portugal", 40)
@@ -118,7 +135,7 @@ lisboa = Aeroporto("Humberto Delgado", "Lisboa", "Portugal", 40)
 voo = Voo("AD100", "08:00", "20/12/2026", natal, lisboa, 2)
 voo.getTripulacao().append(Aeroviario("Carlos", "Piloto"))
 
-passageiro = Passageiro(input("Nome do passageiro: "), input("CPF: "))
+passageiro = Passageiro(input("Nome do passageiro: "), "000")
 operador = Operador("Ana", "OP01")
 perfil = input("1 = passageiro, 2 = operador: ")
 
@@ -158,7 +175,7 @@ while True:
 
     elif opcao == "4":
         for a in voo.getTripulacao():
-            print("-", a.getNome(), a.getFuncao())
+            print("-", a.getNome(), a.getCargo())
 
     elif opcao == "0":
         break
