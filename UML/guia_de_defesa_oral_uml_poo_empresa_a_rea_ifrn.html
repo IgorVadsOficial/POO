@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Defesa Oral UML & POO — Sistema de Empresa Aérea (Q3 & Q4)</title>
+
+  <!-- Fontes Inter e JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Estilos para SVG Interativo do Diagrama EX03 */
+    .uml-node, .uml-rel {
+      cursor: pointer;
+      transition: opacity 0.2s ease, filter 0.2s ease;
+    }
+    .uml-node:hover {
+      filter: brightness(1.12);
+    }
+    .uml-rel:hover {
+      filter: drop-shadow(0 0 6px rgba(129, 140, 248, 0.8));
+    }
+    .uml-selected {
+      filter: drop-shadow(0 0 10px rgba(52, 211, 153, 0.85)) !important;
+    }
+
+    /* Modo Teleprompter */
+    body.teleprompter-mode header,
+    body.teleprompter-mode footer,
+    body.teleprompter-mode .non-teleprompter {
+      display: none !important;
+    }
+    body.teleprompter-mode main {
+      max-width: 960px;
+      padding-top: 2rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-[#121212] dark:text-slate-100 font-sans antialiased transition-colors duration-200 min-h-screen flex flex-col">
+
+  <!-- Toast de Notificação (substitui alert) -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2 rounded-xl bg-slate-900 dark:bg-emerald-600 text-white px-4 py-3 text-sm font-medium shadow-xl border border-slate-700 dark:border-emerald-500">
+    <svg class="w-4 h-4 text-emerald-400 dark:text-white shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+    <span id="toast-msg">Copiado com sucesso!</span>
+  </div>
+
+  <!-- Barra Flutuante para Sair do Modo Teleprompter -->
+  <div id="teleprompter-exit-bar" class="hidden fixed top-4 right-4 z-50 items-center gap-2 bg-slate-900/95 text-white px-4 py-2.5 rounded-2xl shadow-2xl border border-slate-700">
+    <button type="button" id="tp-font-dec" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold">A-</button>
+    <button type="button" id="tp-font-inc" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold">A+</button>
+    <button type="button" id="tp-exit-btn" class="px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-xs font-bold">Sair do Teleprompter</button>
+  </div>
+
+  <!-- Cabeçalho + Navegação por Abas -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-[#18181b]/95 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between py-3 gap-4">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 via-indigo-600 to-teal-600 flex items-center justify-center text-white font-bold shadow-md shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+            </svg>
+          </div>
+          <div class="truncate">
+            <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-white truncate">
+              Defesa Oral UML &amp; POO — Sistema de Empresa Aérea (Q3 &amp; Q4)
+            </h1>
+            <p class="text-xs text-slate-500 dark:text-zinc-400 truncate">
+              IFRN • Programação Orientada a Objetos • Prof. Demetrios Coutinho • 100% fiel ao Diagrama EX03 &amp; EX04.py
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            100% Conforme Q3 &amp; Q4
+          </span>
+          <button id="theme-toggle" type="button" aria-label="Alternar tema claro/escuro" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 transition-colors border border-slate-200 dark:border-zinc-700">
+            <svg class="w-5 h-5 hidden dark:block text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            <svg class="w-5 h-5 block dark:hidden text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Barra de 6 Abas -->
+      <nav aria-label="Abas da Defesa Oral" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-2.5 pt-1">
+        <button data-tab="tab-conformidade" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-indigo-600 text-white shadow-sm">
+          1. Conformidade Q3 &amp; Q4
+        </button>
+        <button data-tab="tab-diagrama" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800">
+          2. Diagrama Interativo &amp; Classes
+        </button>
+        <button data-tab="tab-relacionamentos" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800">
+          3. Relacionamentos &amp; Conceitos UML
+        </button>
+        <button data-tab="tab-codigo" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800">
+          4. Código EX04.py Comentado
+        </button>
+        <button data-tab="tab-roteiros" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800">
+          5. Roteiros da Defesa Oral
+        </button>
+        <button data-tab="tab-banca" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800">
+          6. Perguntas da Banca (Q&amp;A)
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <!-- =================================================================== -->
+    <!-- ABA 1: CONFORMIDADE Q3 & Q4                                         -->
+    <!-- =================================================================== -->
+    <section id="tab-conformidade" class="tab-panel space-y-6">
+      <div class="rounded-2xl bg-gradient-to-br from-zinc-900 via-indigo-950 to-zinc-900 text-white p-6 sm:p-8 shadow-lg border border-indigo-800/40">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="space-y-2 max-w-3xl">
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold uppercase tracking-wider border border-emerald-500/30">
+              Verificação Completa • 100% Atendido
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              Aderência Total às Questões 3 e 4 do IFRN
+            </h2>
+            <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+              O <strong class="text-white">Diagrama EX03</strong> modela todas as <strong class="text-emerald-300">7 classes</strong> e todos os <strong class="text-emerald-300">8 requisitos funcionais da Questão 3</strong> com total coerência estrutural. Por sua vez, o arquivo <code class="px-1.5 py-0.5 rounded bg-white/10 font-mono text-indigo-200">EX04.py</code> implementa exatamente as mesmas 7 classes, atributos, visibilidades e assinaturas de métodos do diagrama, oferecendo a <strong class="text-white">interface interativa de usuário (CLI)</strong> exigida na <strong class="text-emerald-300">Questão 4</strong>.
+            </p>
+          </div>
+          <div class="grid grid-cols-3 gap-3 shrink-0">
+            <div class="rounded-xl bg-white/10 backdrop-blur p-4 text-center border border-white/10">
+              <div class="text-2xl font-extrabold text-purple-300">7</div>
+              <div class="text-xs text-slate-300 mt-1">Classes Exatas</div>
+            </div>
+            <div class="rounded-xl bg-white/10 backdrop-blur p-4 text-center border border-white/10">
+              <div class="text-2xl font-extrabold text-emerald-400">8 / 8</div>
+              <div class="text-xs text-slate-300 mt-1">Regras Q3</div>
+            </div>
+            <div class="rounded-xl bg-white/10 backdrop-blur p-4 text-center border border-white/10">
+              <div class="text-2xl font-extrabold text-teal-300">100%</div>
+              <div class="text-xs text-slate-300 mt-1">Código Q4</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabela 1: Questão 3 (8 Requisitos) -->
+      <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200 dark:border-zinc-800">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Questão 3 — Verificação dos 8 Requisitos no Diagrama EX03</h3>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-zinc-400">Comparação direta entre cada tópico do enunciado (página 11 do PDF) e o modelo UML.</p>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 border-b border-slate-200 dark:border-zinc-800">
+                <th class="py-3.5 px-4 font-semibold w-10">#</th>
+                <th class="py-3.5 px-4 font-semibold min-w-[230px]">Requisito da Questão 3</th>
+                <th class="py-3.5 px-4 font-semibold min-w-[260px]">Como está no Diagrama EX03.png</th>
+                <th class="py-3.5 px-4 font-semibold w-32 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-zinc-800">
+              <tr class="hover:bg-slate-50 dark:hover:bg-zinc-900/50">
+                <td class="py-3.5 px-4 font-bold text-indigo-600 dark:text-indigo-400">1</td>
+                <td class="py-3.5 px-4 font-medium">"cada voo terá várias reservas associadas a eles"</td>
+                <td class="py-3.5 px-4 text-slate-600 dark:text-zinc-300">Composição <code class="font-mono text-xs bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">Voo (1) ◆── (0..*) Reserva</code> + atributo <code class="font-mono text-xs">- reservas : Reserva[]</code> em <code class="font-mono text-xs">Voo</code> e <code class="font-mono text-xs">+ getReservas()</code>.</td>
+                <td class="py-3.5 px-4 text-center"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Atendido</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-zinc-900/50">
+                <td class="py-3.5 px-4 font-bold text-indigo-600 dark:text-indigo-400">2</td>
+                <td class="py-3.5 px-4 font-medium">"cada voo pode informar o número de assentos livres e sua tripulação (conjunto de aeroviários)"</td>
+                <td class="py-3.5 px-4 text-slate-600 dark:text-zinc-300">Métodos <code class="font-mono text-xs">+ assentosLivres() : int</code> e <code class="font-mono text-xs">+ getTripulacao()</code> + atributo <code class="font-mono text-xs">- tripulantes : Aeroviario[]</code> + Agregação <code class="font-mono text-xs">Voo ◇── "É tripulado por" ── Aeroviario</code>.</td>
+                <td class="py-3.5 px-4 text-center"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Atendido</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-zinc-900/50">
+                <td class="py-3.5 px-4 font-bold text-indigo-600 dark:text-indigo-400">3</td>
+                <td class="py-3.5 px-4 font-medium">"os voos podem ser internacionais ou nacionais"</td>
+                <td class="py-3.5 px-4 text-slate-600 dark:text-zinc-300">Método <code class="font-mono text-xs">+ getTipo() : String</code> em <code class="font-mono text-xs">Voo</code> que compara <code class="font-mono text-xs">partida.getPais()</code> e <code class="font-mono text-xs">destino.getPais()</code> para classificar dinamicamente.</td>
+                <td class="py-3.5 px-4 text-center"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Atendido</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-zinc-900/50">
+                <td class="py-3.5 px-4 font-bold text-indigo-600 dark:text-indigo-400">4</td>
+                <td class="py-3.5 px-4 font-medium">"a um dado voo são atribuídos um código, um horário, uma data, um aeroporto de partida e um de destino"</td>
+                <td class="py-3.5 px-4 text-slate-600 dark:text-zinc-300">Atributos <code class="font-mono text-xs">- codigo : String</code>, <code class="font-mono text-xs">- horario : String</code>, <code class="font-mono text-xs">- data : String</code>, <code class="font-mono text-xs">- partida : Aeroporto</code>, <code class="font-mono text-xs">- destino : Aeroporto</code> e duas associações simples <code class="font-mono text-xs">"Parte de"</code> e <code class="font-mono text-xs">"Chega em"</code> com <code class="font-mono text-xs">Aeroporto</code>.</td>
+                <td class="py-3.5 px-4 text-center"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Atendido</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-zinc-900/50">
+                <td class="py-3.5 px-4 font-bold text-indigo-600 dark:text-indigo-400">5</td>
+                <td class="py-3.5 px-4 font-medium">"um aeroporto possui uma cidade onde se localiza, uma capacidade de decolagens por hora, e um nome"</td>
+                <td class="py-3.5 px-4 text-slate-600 dark:text-zinc-300">Classe <code class="font-mono text-xs">Aeroporto</code> com <code class="font-mono text-xs">- nome : String</code>, <code class="font-mono text-xs">- cidade : String</code>, <code class="font-mono text-xs">- capacidade : int</code> e <code class="font-mono text-xs">- pais : String</code> (+ <code class="font-mono text-xs">getPais()</code>).</td>
+                <td class="py-3.5 px-4 text-center"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Atendido</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-zinc-900/50">
+                <td class="py-3.5 px-4 font-bold text-indigo-600 dark:text-indigo-400">6</td>
+                <td class="py-3.5 px-4 font-medium">"uma reserva possui um passageiro"</td>
+                <td class="py-3.5 px-4 text-slate-600 dark:text-zinc-300">Atributo <code class="font-mono text-xs">- passageiro : Passageiro</code> em <code class="font-mono text-xs">Reserva</code> e Agregação <code class="font-mono text-xs">Passageiro ◇── Reserva</code>.</td>
+                <td class="py-3.5 px-4 text-center"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Atendido</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-zinc-900/50">
+                <td class="py-3.5 px-4 font-bold text-indigo-600 dark:text-indigo-400">7</td>
+                <td class="py-3.5 px-4 font-medium">"operadores são funcionários da empresa responsáveis pela operacionalização das reservas; eles podem criar e cancelar reservas"</td>
+                <td class="py-3.5 px-4 text-slate-600 dark:text-zinc-300"><code class="font-mono text-xs">Operador</code> herda (<code class="font-mono text-xs">──▷</code>) de <code class="font-mono text-xs">&lt;&lt;abstract&gt;&gt; Funcionario</code>, associa-se a <code class="font-mono text-xs">Reserva (0..* — 0..1)</code> e possui <code class="font-mono text-xs">+ criarReserva(passageiro, voo)</code> e <code class="font-mono text-xs">+ cancelarReserva(passageiro, reserva)</code>.</td>
+                <td class="py-3.5 px-4 text-center"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Atendido</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-zinc-900/50">
+                <td class="py-3.5 px-4 font-bold text-indigo-600 dark:text-indigo-400">8</td>
+                <td class="py-3.5 px-4 font-medium">"os passageiros podem criar, cancelar e pagar reservas de voos"</td>
+                <td class="py-3.5 px-4 text-slate-600 dark:text-zinc-300">Classe <code class="font-mono text-xs">Passageiro</code> com <code class="font-mono text-xs">+ criarReserva(voo, operador)</code>, <code class="font-mono text-xs">+ cancelarReserva(reserva)</code> e <code class="font-mono text-xs">+ pagarReserva(reserva)</code>.</td>
+                <td class="py-3.5 px-4 text-center"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Atendido</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tabela 2: Questão 4 (Alinhamento Diagrama <-> EX04.py) -->
+      <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200 dark:border-zinc-800">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Questão 4 — Conformidade entre o Diagrama EX03 e o Código EX04.py</h3>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-zinc-400">Verificação de correspondência 1-para-1 entre o modelo UML e a implementação em Python.</p>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 border-b border-slate-200 dark:border-zinc-800">
+                <th class="py-3 px-4 font-semibold">Aspecto Avaliado</th>
+                <th class="py-3 px-4 font-semibold">Evidência no Código <code class="font-mono text-xs">EX04.py</code></th>
+                <th class="py-3 px-4 font-semibold w-32 text-center">Conformidade</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-zinc-800">
+              <tr>
+                <td class="py-3.5 px-4 font-medium">Assinaturas de Classes, Atributos e Métodos</td>
+                <td class="py-3.5 px-4 text-slate-600 dark:text-zinc-300">Todas as 7 classes (<code class="font-mono text-xs">Aeroporto</code>, <code class="font-mono text-xs">Funcionario</code>, <code class="font-mono text-xs">Aeroviario</code>, <code class="font-mono text-xs">Voo</code>, <code class="font-mono text-xs">Reserva</code>, <code class="font-mono text-xs">Passageiro</code>, <code class="font-mono text-xs">Operador</code>) possuem os exatos atributos privados (<code class="font-mono text-xs">__</code>) e métodos públicos do diagrama.</td>
+                <td class="py-3.5 px-4 text-center"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">100% Fiel</span></td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-medium">Classe Abstrata &amp; Polimorfismo</td>
+                <td class="py-3.5 px-4 text-slate-600 dark:text-zinc-300"><code class="font-mono text-xs">Funcionario(ABC)</code> define <code class="font-mono text-xs">@abstractmethod def getCargo(self)</code>, sobrescrito em <code class="font-mono text-xs">Aeroviario</code> (retorna <code class="font-mono text-xs">__funcao</code>) e em <code class="font-mono text-xs">Operador</code> (retorna <code class="font-mono text-xs">"Operador"</code>).</td>
+                <td class="py-3.5 px-4 text-center"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">100% Fiel</span></td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-medium">Interface de Interação com o Usuário (Q4)</td>
+                <td class="py-3.5 px-4 text-slate-600 dark:text-zinc-300">Menu interativo via terminal (<code class="font-mono text-xs">while True</code> + <code class="font-mono text-xs">input()</code>) com seleção de perfil (<code class="font-mono text-xs">1 = passageiro</code>, <code class="font-mono text-xs">2 = operador</code>) e opções <code class="font-mono text-xs">1 Reservar | 2 Cancelar | 3 Pagar | 4 Tripulação | 0 Sair</code>.</td>
+                <td class="py-3.5 px-4 text-center"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">100% Fiel</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- ABA 2: DIAGRAMA INTERATIVO & CLASSES                                -->
+    <!-- =================================================================== -->
+    <section id="tab-diagrama" class="tab-panel hidden space-y-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-3">
+        <div>
+          <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">Diagrama Interativo EX03 &amp; Anatomia das 7 Classes</h2>
+          <p class="text-sm text-slate-500 dark:text-zinc-400 mt-1">
+            Recriação fiel do <strong>Diagrama EX03.png</strong>. Clique em qualquer <strong>classe</strong> ou <strong>linha de relacionamento</strong> para inspecionar sua explicação técnica.
+          </p>
+        </div>
+        <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-700 dark:bg-indigo-950/70 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+          Clique nas caixas ou linhas do diagrama
+        </span>
+      </div>
+
+      <!-- Área Interativa: SVG à esquerda + Painel Inspetor à direita -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- SVG Fiel ao Diagrama EX03.png -->
+        <div class="lg:col-span-8 rounded-2xl bg-[#161616] border border-zinc-800 p-3 sm:p-4 shadow-lg overflow-x-auto">
+          <svg id="uml-svg" viewBox="0 0 760 1120" class="w-full h-auto min-w-[600px] select-none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Definição de marcadores EXATOS do Diagrama EX03.png -->
+            <defs>
+              <!-- Triângulo vazio de Generalização/Herança -->
+              <marker id="inherit-arrow" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="11" markerHeight="11" orient="auto-start-reverse">
+                <polygon points="1,1 13,7 1,13" fill="#161616" stroke="#d4d4d8" stroke-width="1.6"/>
+              </marker>
+              <!-- Losango vazio de Agregação -->
+              <marker id="agg-diamond" viewBox="0 0 18 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto-start-reverse">
+                <polygon points="1,6 9,1 17,6 9,11" fill="#161616" stroke="#d4d4d8" stroke-width="1.5"/>
+              </marker>
+              <!-- Losango preenchido de Composição -->
+              <marker id="comp-diamond" viewBox="0 0 18 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto-start-reverse">
+                <polygon points="1,6 9,1 17,6 9,11" fill="#e4e4e7" stroke="#e4e4e7" stroke-width="1.5"/>
+              </marker>
+            </defs>
+
+            <!-- ==================== RELACIONAMENTOS EXATOS ==================== -->
+
+            <!-- 1. Passageiro ◇── Reserva (Agregação vertical) -->
+            <g class="uml-rel" data-info="rel-pass-res">
+              <line x1="150" y1="215" x2="150" y2="305" stroke="transparent" stroke-width="16"/>
+              <line x1="150" y1="215" x2="150" y2="305" stroke="#d4d4d8" stroke-width="1.6" marker-start="url(#agg-diamond)"/>
+              <text x="160" y="233" fill="#e4e4e7" font-size="12" font-family="JetBrains Mono" font-weight="600">0..*</text>
+              <text x="160" y="297" fill="#e4e4e7" font-size="12" font-family="JetBrains Mono" font-weight="600">1</text>
+            </g>
+
+            <!-- 2. Reserva ── Operador (Associação simples horizontal sem seta) -->
+            <g class="uml-rel" data-info="rel-res-op">
+              <line x1="275" y1="395" x2="425" y2="395" stroke="transparent" stroke-width="16"/>
+              <line x1="275" y1="395" x2="425" y2="395" stroke="#d4d4d8" stroke-width="1.6"/>
+              <text x="283" y="386" fill="#e4e4e7" font-size="12" font-family="JetBrains Mono" font-weight="600">0..*</text>
+              <text x="394" y="386" fill="#e4e4e7" font-size="12" font-family="JetBrains Mono" font-weight="600">0..1</text>
+            </g>
+
+            <!-- 3. Voo ◆── Reserva (Composição vertical) -->
+            <g class="uml-rel" data-info="rel-voo-res">
+              <line x1="150" y1="655" x2="150" y2="540" stroke="transparent" stroke-width="16"/>
+              <line x1="150" y1="655" x2="150" y2="540" stroke="#d4d4d8" stroke-width="1.6" marker-start="url(#comp-diamond)"/>
+              <text x="160" y="558" fill="#e4e4e7" font-size="12" font-family="JetBrains Mono" font-weight="600">0..*</text>
+              <text x="160" y="646" fill="#e4e4e7" font-size="12" font-family="JetBrains Mono" font-weight="600">1</text>
+            </g>
+
+            <!-- 4. Operador ──▷ Funcionario (Generalização) -->
+            <g class="uml-rel" data-info="rel-heranca">
+              <line x1="585" y1="465" x2="585" y2="555" stroke="transparent" stroke-width="16"/>
+              <line x1="585" y1="465" x2="585" y2="555" stroke="#d4d4d8" stroke-width="1.6" marker-end="url(#inherit-arrow)"/>
+            </g>
+
+            <!-- 5. Aeroviario ──▷ Funcionario (Generalização) -->
+            <g class="uml-rel" data-info="rel-heranca">
+              <line x1="585" y1="735" x2="585" y2="660" stroke="transparent" stroke-width="16"/>
+              <line x1="585" y1="735" x2="585" y2="660" stroke="#d4d4d8" stroke-width="1.6" marker-end="url(#inherit-arrow)"/>
+            </g>
+
+            <!-- 6. Voo ◇── "É tripulado por" ── Aeroviario (Agregação horizontal) -->
+            <g class="uml-rel" data-info="rel-voo-aerov">
+              <line x1="275" y1="795" x2="485" y2="795" stroke="transparent" stroke-width="16"/>
+              <line x1="275" y1="795" x2="485" y2="795" stroke="#d4d4d8" stroke-width="1.6" marker-start="url(#agg-diamond)"/>
+              <text x="380" y="786" text-anchor="middle" fill="#e4e4e7" font-size="12" font-family="Inter" font-weight="600">É tripulado por</text>
+            </g>
+
+            <!-- 7. Voo ── "Parte de" ── Aeroporto (Associação simples sem seta) -->
+            <g class="uml-rel" data-info="rel-voo-aero">
+              <line x1="275" y1="955" x2="485" y2="955" stroke="transparent" stroke-width="14"/>
+              <line x1="275" y1="955" x2="485" y2="955" stroke="#d4d4d8" stroke-width="1.6"/>
+              <text x="380" y="947" text-anchor="middle" fill="#e4e4e7" font-size="12" font-family="Inter" font-weight="600">Parte de</text>
+            </g>
+
+            <!-- 8. Voo ── "Chega em" ── Aeroporto (Associação simples sem seta) -->
+            <g class="uml-rel" data-info="rel-voo-aero">
+              <polyline points="275,975 275,1015 485,1015" fill="none" stroke="transparent" stroke-width="14"/>
+              <polyline points="275,975 275,1015 485,1015" fill="none" stroke="#d4d4d8" stroke-width="1.6"/>
+              <text x="380" y="1007" text-anchor="middle" fill="#e4e4e7" font-size="12" font-family="Inter" font-weight="600">Chega em</text>
+            </g>
+
+            <!-- ==================== AS 7 CLASSES EXATAS ==================== -->
+
+            <!-- CLASSE 1: Passageiro (Roxo) -->
+            <g class="uml-node" data-info="cls-passageiro">
+              <rect x="20" y="15" width="260" height="200" rx="4" fill="#1e1722" stroke="#a855f7" stroke-width="1.8"/>
+              <line x1="20" y1="52" x2="280" y2="52" stroke="#a855f7" stroke-width="1.4"/>
+              <line x1="20" y1="115" x2="280" y2="115" stroke="#a855f7" stroke-width="1.4"/>
+              <text x="150" y="38" text-anchor="middle" fill="#f3e8ff" font-size="14" font-family="Inter" font-weight="700">Passageiro</text>
+              <text x="32" y="71" fill="#e9d5ff" font-size="11.5" font-family="JetBrains Mono">- nome : String</text>
+              <text x="32" y="88" fill="#e9d5ff" font-size="11.5" font-family="JetBrains Mono">- cpf : String</text>
+              <text x="32" y="105" fill="#e9d5ff" font-size="11.5" font-family="JetBrains Mono">- reservas : Reserva[]</text>
+              <text x="32" y="135" fill="#f3e8ff" font-size="11.5" font-family="JetBrains Mono">+ criarReserva(voo, operador)</text>
+              <text x="32" y="153" fill="#f3e8ff" font-size="11.5" font-family="JetBrains Mono">+ cancelarReserva(reserva)</text>
+              <text x="32" y="171" fill="#f3e8ff" font-size="11.5" font-family="JetBrains Mono">+ pagarReserva(reserva)</text>
+              <text x="32" y="189" fill="#f3e8ff" font-size="11.5" font-family="JetBrains Mono">+ getReservas()</text>
+            </g>
+
+            <!-- CLASSE 2: Reserva (Verde-água / Teal) -->
+            <g class="uml-node" data-info="cls-reserva">
+              <rect x="25" y="305" width="250" height="235" rx="4" fill="#112220" stroke="#14b8a6" stroke-width="1.8"/>
+              <line x1="25" y1="342" x2="275" y2="342" stroke="#14b8a6" stroke-width="1.4"/>
+              <line x1="25" y1="440" x2="275" y2="440" stroke="#14b8a6" stroke-width="1.4"/>
+              <text x="150" y="328" text-anchor="middle" fill="#ccfbf1" font-size="14" font-family="Inter" font-weight="700">Reserva</text>
+              <text x="37" y="361" fill="#99f6e4" font-size="11.5" font-family="JetBrains Mono">- codigo : String</text>
+              <text x="37" y="378" fill="#99f6e4" font-size="11.5" font-family="JetBrains Mono">- paga : boolean</text>
+              <text x="37" y="395" fill="#99f6e4" font-size="11.5" font-family="JetBrains Mono">- passageiro : Passageiro</text>
+              <text x="37" y="412" fill="#99f6e4" font-size="11.5" font-family="JetBrains Mono">- voo : Voo</text>
+              <text x="37" y="429" fill="#99f6e4" font-size="11.5" font-family="JetBrains Mono">- operador : Operador</text>
+              <text x="37" y="460" fill="#ccfbf1" font-size="11.5" font-family="JetBrains Mono">+ getCodigo()</text>
+              <text x="37" y="478" fill="#ccfbf1" font-size="11.5" font-family="JetBrains Mono">+ getPaga()</text>
+              <text x="37" y="496" fill="#ccfbf1" font-size="11.5" font-family="JetBrains Mono">+ setPaga(paga)</text>
+              <text x="37" y="514" fill="#ccfbf1" font-size="11.5" font-family="JetBrains Mono">+ getVoo()</text>
+            </g>
+
+            <!-- CLASSE 3: Operador (Laranja) -->
+            <g class="uml-node" data-info="cls-operador">
+              <rect x="425" y="305" width="320" height="160" rx="4" fill="#231911" stroke="#ea580c" stroke-width="1.8"/>
+              <line x1="425" y1="342" x2="745" y2="342" stroke="#ea580c" stroke-width="1.4"/>
+              <line x1="425" y1="388" x2="745" y2="388" stroke="#ea580c" stroke-width="1.4"/>
+              <text x="585" y="328" text-anchor="middle" fill="#ffedd5" font-size="14" font-family="Inter" font-weight="700">Operador</text>
+              <text x="437" y="361" fill="#fed7aa" font-size="11.5" font-family="JetBrains Mono">- matricula : String</text>
+              <text x="437" y="378" fill="#fed7aa" font-size="11.5" font-family="JetBrains Mono">- reservas : Reserva[]</text>
+              <text x="437" y="408" fill="#ffedd5" font-size="11.5" font-family="JetBrains Mono">+ criarReserva(passageiro, voo)</text>
+              <text x="437" y="426" fill="#ffedd5" font-size="11.5" font-family="JetBrains Mono">+ cancelarReserva(passageiro, reserva)</text>
+              <text x="437" y="444" fill="#ffedd5" font-size="11.5" font-family="JetBrains Mono">+ getCargo() : String</text>
+            </g>
+
+            <!-- CLASSE 4: <<abstract>> Funcionario (Branco / Neutro) -->
+            <g class="uml-node" data-info="cls-funcionario">
+              <rect x="485" y="555" width="200" height="105" rx="4" fill="#1c1c1e" stroke="#e4e4e7" stroke-width="1.8"/>
+              <line x1="485" y1="598" x2="685" y2="598" stroke="#e4e4e7" stroke-width="1.4"/>
+              <line x1="485" y1="622" x2="685" y2="622" stroke="#e4e4e7" stroke-width="1.4"/>
+              <text x="585" y="573" text-anchor="middle" fill="#d4d4d8" font-size="11" font-family="JetBrains Mono">&lt;&lt;abstract&gt;&gt;</text>
+              <text x="585" y="590" text-anchor="middle" fill="#ffffff" font-size="14" font-family="Inter" font-weight="700" font-style="italic">Funcionario</text>
+              <text x="497" y="614" fill="#e4e4e7" font-size="11.5" font-family="JetBrains Mono">- nome : String</text>
+              <text x="497" y="638" fill="#ffffff" font-size="11.5" font-family="JetBrains Mono">+ getNome()</text>
+              <text x="497" y="653" fill="#ffffff" font-size="11.5" font-family="JetBrains Mono">+ getCargo() : String</text>
+            </g>
+
+            <!-- CLASSE 5: Aeroviario (Verde) -->
+            <g class="uml-node" data-info="cls-aeroviario">
+              <rect x="485" y="735" width="200" height="125" rx="4" fill="#122217" stroke="#22c55e" stroke-width="1.8"/>
+              <line x1="485" y1="772" x2="685" y2="772" stroke="#22c55e" stroke-width="1.4"/>
+              <line x1="485" y1="806" x2="685" y2="806" stroke="#22c55e" stroke-width="1.4"/>
+              <text x="585" y="758" text-anchor="middle" fill="#dcfce7" font-size="14" font-family="Inter" font-weight="700">Aeroviario</text>
+              <text x="497" y="793" fill="#bbf7d0" font-size="11.5" font-family="JetBrains Mono">- funcao : String</text>
+              <text x="497" y="826" fill="#dcfce7" font-size="11.5" font-family="JetBrains Mono">+ getFuncao()</text>
+              <text x="497" y="844" fill="#dcfce7" font-size="11.5" font-family="JetBrains Mono">+ getCargo() : String</text>
+            </g>
+
+            <!-- CLASSE 6: Voo (Índigo / Violeta) -->
+            <g class="uml-node" data-info="cls-voo">
+              <rect x="25" y="655" width="250" height="320" rx="4" fill="#191627" stroke="#818cf8" stroke-width="1.8"/>
+              <line x1="25" y1="692" x2="275" y2="692" stroke="#818cf8" stroke-width="1.4"/>
+              <line x1="25" y1="852" x2="275" y2="852" stroke="#818cf8" stroke-width="1.4"/>
+              <text x="150" y="678" text-anchor="middle" fill="#e0e7ff" font-size="14" font-family="Inter" font-weight="700">Voo</text>
+              <text x="37" y="711" fill="#c7d2fe" font-size="11.5" font-family="JetBrains Mono">- codigo : String</text>
+              <text x="37" y="728" fill="#c7d2fe" font-size="11.5" font-family="JetBrains Mono">- horario : String</text>
+              <text x="37" y="745" fill="#c7d2fe" font-size="11.5" font-family="JetBrains Mono">- data : String</text>
+              <text x="37" y="762" fill="#c7d2fe" font-size="11.5" font-family="JetBrains Mono">- assentos : int</text>
+              <text x="37" y="779" fill="#c7d2fe" font-size="11.5" font-family="JetBrains Mono">- partida : Aeroporto</text>
+              <text x="37" y="796" fill="#c7d2fe" font-size="11.5" font-family="JetBrains Mono">- destino : Aeroporto</text>
+              <text x="37" y="813" fill="#c7d2fe" font-size="11.5" font-family="JetBrains Mono">- reservas : Reserva[]</text>
+              <text x="37" y="830" fill="#c7d2fe" font-size="11.5" font-family="JetBrains Mono">- tripulantes : Aeroviario[]</text>
+              <text x="37" y="874" fill="#e0e7ff" font-size="11.5" font-family="JetBrains Mono">+ assentosLivres() : int</text>
+              <text x="37" y="892" fill="#e0e7ff" font-size="11.5" font-family="JetBrains Mono">+ getTripulacao()</text>
+              <text x="37" y="910" fill="#e0e7ff" font-size="11.5" font-family="JetBrains Mono">+ getTipo() : String</text>
+              <text x="37" y="928" fill="#e0e7ff" font-size="11.5" font-family="JetBrains Mono">+ getReservas()</text>
+            </g>
+
+            <!-- CLASSE 7: Aeroporto (Coral / Salmão) -->
+            <g class="uml-node" data-info="cls-aeroporto">
+              <rect x="485" y="920" width="200" height="170" rx="4" fill="#251616" stroke="#f87171" stroke-width="1.8"/>
+              <line x1="485" y1="957" x2="685" y2="957" stroke="#f87171" stroke-width="1.4"/>
+              <line x1="485" y1="1045" x2="685" y2="1045" stroke="#f87171" stroke-width="1.4"/>
+              <text x="585" y="943" text-anchor="middle" fill="#fee2e2" font-size="14" font-family="Inter" font-weight="700">Aeroporto</text>
+              <text x="497" y="976" fill="#fecaca" font-size="11.5" font-family="JetBrains Mono">- nome : String</text>
+              <text x="497" y="993" fill="#fecaca" font-size="11.5" font-family="JetBrains Mono">- cidade : String</text>
+              <text x="497" y="1010" fill="#fecaca" font-size="11.5" font-family="JetBrains Mono">- pais : String</text>
+              <text x="497" y="1027" fill="#fecaca" font-size="11.5" font-family="JetBrains Mono">- capacidade : int</text>
+              <text x="497" y="1068" fill="#fee2e2" font-size="11.5" font-family="JetBrains Mono">+ getPais()</text>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Painel Inspetor Lateral -->
+        <aside class="lg:col-span-4 rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 p-6 shadow-sm sticky top-28 space-y-4">
+          <div class="flex items-center justify-between">
+            <span id="inspector-badge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">
+              Inspetor UML Interativo
+            </span>
+            <span class="text-xs text-slate-400">Diagrama EX03</span>
+          </div>
+          <h3 id="inspector-title" class="text-xl font-extrabold text-slate-900 dark:text-white">
+            Clique em qualquer classe ou linha
+          </h3>
+          <div id="inspector-body" class="text-sm text-slate-600 dark:text-zinc-300 space-y-3 leading-relaxed">
+            <p>
+              Este SVG reproduz fielmente todas as <strong>7 classes</strong>, os <strong>atributos privados (-)</strong>, os <strong>métodos públicos (+)</strong> e as <strong>linhas exatas</strong> do seu arquivo <code class="font-mono text-xs">Diagrama EX03.png</code>.
+            </p>
+            <p>
+              Experimente clicar em:
+            </p>
+            <ul class="list-disc pl-5 space-y-1 text-xs sm:text-sm">
+              <li><strong>Voo ◆── Reserva</strong> (Composição)</li>
+              <li><strong>Passageiro ◇── Reserva</strong> (Agregação + nota sobre multiplicidades)</li>
+              <li><strong>Voo ◇── "É tripulado por" ── Aeroviario</strong></li>
+              <li><strong>Operador / Aeroviario ──▷ Funcionario</strong></li>
+              <li><strong>Voo ── "Parte de" / "Chega em" ── Aeroporto</strong></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Cards Detalhados das 7 Classes -->
+      <div class="pt-4 space-y-4">
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Explicação Detalhada de Cada Uma das 7 Classes</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- 1. Passageiro -->
+          <div class="rounded-2xl bg-white dark:bg-[#18181b] border-t-4 border-purple-500 border-x border-b border-slate-200 dark:border-zinc-800 p-5 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-base text-slate-900 dark:text-white">1. Passageiro</h4>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">Cliente</span>
+            </div>
+            <div class="text-xs font-mono bg-slate-50 dark:bg-zinc-900 p-3 rounded-xl space-y-1 text-slate-700 dark:text-zinc-300">
+              <div class="text-slate-400 uppercase text-[10px] font-sans font-bold">Atributos (-)</div>
+              <div>- nome : String</div>
+              <div>- cpf : String</div>
+              <div>- reservas : Reserva[]</div>
+              <div class="text-slate-400 uppercase text-[10px] font-sans font-bold pt-2">Métodos (+)</div>
+              <div class="text-purple-700 dark:text-purple-300">+ criarReserva(voo, operador)</div>
+              <div class="text-purple-700 dark:text-purple-300">+ cancelarReserva(reserva)</div>
+              <div class="text-purple-700 dark:text-purple-300">+ pagarReserva(reserva)</div>
+              <div class="text-purple-700 dark:text-purple-300">+ getReservas()</div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-zinc-400">
+              Representa o cliente titular das reservas. É a <strong>única classe</strong> com o método <code class="font-mono text-xs">pagarReserva(reserva)</code>, além de poder criar e cancelar suas próprias reservas (com <code class="font-mono text-xs">operador=None</code> por padrão).
+            </p>
+          </div>
+
+          <!-- 2. Reserva -->
+          <div class="rounded-2xl bg-white dark:bg-[#18181b] border-t-4 border-teal-500 border-x border-b border-slate-200 dark:border-zinc-800 p-5 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-base text-slate-900 dark:text-white">2. Reserva</h4>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300">Mediadora</span>
+            </div>
+            <div class="text-xs font-mono bg-slate-50 dark:bg-zinc-900 p-3 rounded-xl space-y-1 text-slate-700 dark:text-zinc-300">
+              <div class="text-slate-400 uppercase text-[10px] font-sans font-bold">Atributos (-)</div>
+              <div>- codigo : String</div>
+              <div>- paga : boolean</div>
+              <div>- passageiro : Passageiro</div>
+              <div>- voo : Voo</div>
+              <div>- operador : Operador</div>
+              <div class="text-slate-400 uppercase text-[10px] font-sans font-bold pt-2">Métodos (+)</div>
+              <div class="text-teal-700 dark:text-teal-300">+ getCodigo()</div>
+              <div class="text-teal-700 dark:text-teal-300">+ getPaga()</div>
+              <div class="text-teal-700 dark:text-teal-300">+ setPaga(paga)</div>
+              <div class="text-teal-700 dark:text-teal-300">+ getVoo()</div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-zinc-400">
+              Classe associativa/mediadora que conecta <code class="font-mono text-xs">Passageiro</code>, <code class="font-mono text-xs">Voo</code> e opcionalmente <code class="font-mono text-xs">Operador</code>, controlando o código da reserva e o status booleano <code class="font-mono text-xs">paga</code>.
+            </p>
+          </div>
+
+          <!-- 3. Operador -->
+          <div class="rounded-2xl bg-white dark:bg-[#18181b] border-t-4 border-orange-500 border-x border-b border-slate-200 dark:border-zinc-800 p-5 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-base text-slate-900 dark:text-white">3. Operador</h4>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300">Subclasse</span>
+            </div>
+            <div class="text-xs font-mono bg-slate-50 dark:bg-zinc-900 p-3 rounded-xl space-y-1 text-slate-700 dark:text-zinc-300">
+              <div class="text-slate-400 uppercase text-[10px] font-sans font-bold">Atributos (-)</div>
+              <div>- matricula : String</div>
+              <div>- reservas : Reserva[]</div>
+              <div class="text-slate-400 uppercase text-[10px] font-sans font-bold pt-2">Métodos (+)</div>
+              <div class="text-orange-700 dark:text-orange-300">+ criarReserva(passageiro, voo)</div>
+              <div class="text-orange-700 dark:text-orange-300">+ cancelarReserva(passageiro, reserva)</div>
+              <div class="text-orange-700 dark:text-orange-300">+ getCargo() : String</div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-zinc-400">
+              Especialização de <code class="font-mono text-xs">Funcionario</code> responsável pelo atendimento: cria e cancela reservas em nome de um passageiro e implementa <code class="font-mono text-xs">getCargo()</code> retornando <code class="font-mono text-xs">"Operador"</code>.
+            </p>
+          </div>
+
+          <!-- 4. <<abstract>> Funcionario -->
+          <div class="rounded-2xl bg-white dark:bg-[#18181b] border-t-4 border-zinc-400 border-x border-b border-slate-200 dark:border-zinc-800 p-5 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-base italic text-slate-900 dark:text-white">4. &lt;&lt;abstract&gt;&gt; Funcionario</h4>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded bg-zinc-200 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200">Abstrata</span>
+            </div>
+            <div class="text-xs font-mono bg-slate-50 dark:bg-zinc-900 p-3 rounded-xl space-y-1 text-slate-700 dark:text-zinc-300">
+              <div class="text-slate-400 uppercase text-[10px] font-sans font-bold">Atributos (-)</div>
+              <div>- nome : String</div>
+              <div class="text-slate-400 uppercase text-[10px] font-sans font-bold pt-2">Métodos (+)</div>
+              <div>+ getNome()</div>
+              <div class="italic">+ getCargo() : String</div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-zinc-400">
+              Superclasse abstrata (nome em itálico e estereótipo <code class="font-mono text-xs">&lt;&lt;abstract&gt;&gt;</code>). Não pode ser instanciada diretamente; centraliza <code class="font-mono text-xs">nome</code> e obriga as subclasses a implementarem <code class="font-mono text-xs">getCargo()</code>.
+            </p>
+          </div>
+
+          <!-- 5. Aeroviario -->
+          <div class="rounded-2xl bg-white dark:bg-[#18181b] border-t-4 border-green-500 border-x border-b border-slate-200 dark:border-zinc-800 p-5 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-base text-slate-900 dark:text-white">5. Aeroviario</h4>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300">Subclasse</span>
+            </div>
+            <div class="text-xs font-mono bg-slate-50 dark:bg-zinc-900 p-3 rounded-xl space-y-1 text-slate-700 dark:text-zinc-300">
+              <div class="text-slate-400 uppercase text-[10px] font-sans font-bold">Atributos (-)</div>
+              <div>- funcao : String</div>
+              <div class="text-slate-400 uppercase text-[10px] font-sans font-bold pt-2">Métodos (+)</div>
+              <div class="text-green-700 dark:text-green-300">+ getFuncao()</div>
+              <div class="text-green-700 dark:text-green-300">+ getCargo() : String</div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-zinc-400">
+              Especialização de <code class="font-mono text-xs">Funcionario</code> que compõe a tripulação do voo (Piloto, Copiloto, Comissário). Sobrescreve <code class="font-mono text-xs">getCargo()</code> retornando sua própria <code class="font-mono text-xs">funcao</code>.
+            </p>
+          </div>
+
+          <!-- 6. Voo -->
+          <div class="rounded-2xl bg-white dark:bg-[#18181b] border-t-4 border-indigo-500 border-x border-b border-slate-200 dark:border-zinc-800 p-5 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-base text-slate-900 dark:text-white">6. Voo</h4>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">Núcleo</span>
+            </div>
+            <div class="text-xs font-mono bg-slate-50 dark:bg-zinc-900 p-3 rounded-xl space-y-1 text-slate-700 dark:text-zinc-300">
+              <div class="text-slate-400 uppercase text-[10px] font-sans font-bold">Atributos (-)</div>
+              <div>- codigo, horario, data : String</div>
+              <div>- assentos : int</div>
+              <div>- partida, destino : Aeroporto</div>
+              <div>- reservas : Reserva[]</div>
+              <div>- tripulantes : Aeroviario[]</div>
+              <div class="text-slate-400 uppercase text-[10px] font-sans font-bold pt-2">Métodos (+)</div>
+              <div class="text-indigo-700 dark:text-indigo-300">+ assentosLivres() : int</div>
+              <div class="text-indigo-700 dark:text-indigo-300">+ getTripulacao()</div>
+              <div class="text-indigo-700 dark:text-indigo-300">+ getTipo() : String</div>
+              <div class="text-indigo-700 dark:text-indigo-300">+ getReservas()</div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-zinc-400">
+              Classe central do sistema. Calcula assentos disponíveis dinamicamente e determina se o voo é <code class="font-mono text-xs">"NACIONAL"</code> ou <code class="font-mono text-xs">"INTERNACIONAL"</code> via <code class="font-mono text-xs">getTipo()</code>.
+            </p>
+          </div>
+
+          <!-- 7. Aeroporto -->
+          <div class="md:col-span-2 lg:col-span-3 rounded-2xl bg-white dark:bg-[#18181b] border-t-4 border-red-400 border-x border-b border-slate-200 dark:border-zinc-800 p-5 shadow-sm">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">7. Aeroporto</h4>
+                  <span class="text-xs font-semibold px-2 py-0.5 rounded bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300">Infraestrutura</span>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-zinc-400">
+                  Armazena <code class="font-mono text-xs">- nome : String</code>, <code class="font-mono text-xs">- cidade : String</code>, <code class="font-mono text-xs">- pais : String</code> e <code class="font-mono text-xs">- capacidade : int</code> (decolagens/hora), além de <code class="font-mono text-xs">+ getPais()</code>, usado por <code class="font-mono text-xs">Voo.getTipo()</code> para comparar origem e destino.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- ABA 3: RELACIONAMENTOS & CONCEITOS UML                              -->
+    <!-- =================================================================== -->
+    <section id="tab-relacionamentos" class="tab-panel hidden space-y-6">
+      <div>
+        <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">Relacionamentos &amp; Conceitos UML Aplicados</h2>
+        <p class="text-sm text-slate-500 dark:text-zinc-400 mt-1">
+          Todos os conceitos exigidos para a defesa oral explicados com mini-SVGs fiéis ao <strong>Diagrama EX03.png</strong>.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- 1. Composição -->
+        <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 dark:text-white">1. Composição (Losango Preenchido)</h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">Todo-Parte Forte</span>
+          </div>
+          <div class="rounded-xl bg-[#161616] p-3 border border-zinc-800 flex justify-center">
+            <svg class="w-full max-w-xs h-12" viewBox="0 0 320 48" fill="none">
+              <rect x="4" y="10" width="76" height="28" rx="4" fill="#191627" stroke="#818cf8" stroke-width="1.5"/>
+              <text x="42" y="28" text-anchor="middle" fill="#e0e7ff" font-size="12" font-weight="700" font-family="Inter">Voo</text>
+              <polygon points="80,24 93,17 106,24 93,31" fill="#e4e4e7"/>
+              <line x1="106" y1="24" x2="236" y2="24" stroke="#d4d4d8" stroke-width="1.6"/>
+              <text x="110" y="15" fill="#e4e4e7" font-size="11" font-family="JetBrains Mono">1</text>
+              <text x="208" y="15" fill="#e4e4e7" font-size="11" font-family="JetBrains Mono">0..*</text>
+              <rect x="236" y="10" width="80" height="28" rx="4" fill="#112220" stroke="#14b8a6" stroke-width="1.5"/>
+              <text x="276" y="28" text-anchor="middle" fill="#ccfbf1" font-size="12" font-weight="700" font-family="Inter">Reserva</text>
+            </svg>
+          </div>
+          <p class="text-sm text-slate-600 dark:text-zinc-300">
+            <strong>Onde aparece:</strong> <code class="font-mono text-xs">Voo (1) ◆── (0..*) Reserva</code>.<br/>
+            <strong>Significado:</strong> Relação todo-parte <strong>forte</strong> com dependência de ciclo de vida. Uma reserva pertence a um único voo e não faz sentido existir se o voo for removido.
+          </p>
+        </div>
+
+        <!-- 2. Agregação -->
+        <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 dark:text-white">2. Agregação (Losango Vazio)</h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Todo-Parte Fraca</span>
+          </div>
+          <div class="rounded-xl bg-[#161616] p-3 border border-zinc-800 flex justify-center">
+            <svg class="w-full max-w-xs h-12" viewBox="0 0 320 48" fill="none">
+              <rect x="4" y="10" width="68" height="28" rx="4" fill="#191627" stroke="#818cf8" stroke-width="1.5"/>
+              <text x="38" y="28" text-anchor="middle" fill="#e0e7ff" font-size="12" font-weight="700" font-family="Inter">Voo</text>
+              <polygon points="72,24 85,17 98,24 85,31" fill="#161616" stroke="#d4d4d8" stroke-width="1.5"/>
+              <line x1="98" y1="24" x2="224" y2="24" stroke="#d4d4d8" stroke-width="1.6"/>
+              <text x="161" y="15" text-anchor="middle" fill="#e4e4e7" font-size="10.5" font-weight="600" font-family="Inter">É tripulado por</text>
+              <rect x="224" y="10" width="92" height="28" rx="4" fill="#122217" stroke="#22c55e" stroke-width="1.5"/>
+              <text x="270" y="28" text-anchor="middle" fill="#dcfce7" font-size="12" font-weight="700" font-family="Inter">Aeroviario</text>
+            </svg>
+          </div>
+          <p class="text-sm text-slate-600 dark:text-zinc-300">
+            <strong>Onde aparece:</strong> Em dois pontos do diagrama:
+            (1) <code class="font-mono text-xs">Voo ◇── "É tripulado por" ── Aeroviario</code> (o tripulante continua existindo após o voo e pode tripular vários voos) e
+            (2) <code class="font-mono text-xs">Passageiro ◇── Reserva</code> (o passageiro agrupa suas reservas como todo-parte independente).
+          </p>
+        </div>
+
+        <!-- 3. Generalização / Herança -->
+        <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 dark:text-white">3. Generalização / Herança</h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">Relação "É um"</span>
+          </div>
+          <div class="rounded-xl bg-[#161616] p-3 border border-zinc-800 flex justify-center">
+            <svg class="w-full max-w-xs h-12" viewBox="0 0 320 48" fill="none">
+              <rect x="4" y="10" width="114" height="28" rx="4" fill="#231911" stroke="#ea580c" stroke-width="1.5"/>
+              <text x="61" y="28" text-anchor="middle" fill="#ffedd5" font-size="11" font-weight="700" font-family="Inter">Operador / Aerov.</text>
+              <line x1="118" y1="24" x2="202" y2="24" stroke="#d4d4d8" stroke-width="1.6"/>
+              <polygon points="202,17 216,24 202,31" fill="#161616" stroke="#d4d4d8" stroke-width="1.6"/>
+              <rect x="218" y="10" width="98" height="28" rx="4" fill="#1c1c1e" stroke="#e4e4e7" stroke-width="1.5"/>
+              <text x="267" y="28" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="700" font-style="italic" font-family="Inter">Funcionario</text>
+            </svg>
+          </div>
+          <p class="text-sm text-slate-600 dark:text-zinc-300">
+            <strong>Linha contínua + triângulo vazio (<code class="font-mono text-xs">──▷</code>):</strong> Tanto <code class="font-mono text-xs">Operador</code> quanto <code class="font-mono text-xs">Aeroviario</code> apontam para <code class="font-mono text-xs">&lt;&lt;abstract&gt;&gt; Funcionario</code>, herdando <code class="font-mono text-xs">nome</code> e <code class="font-mono text-xs">getNome()</code> e aplicando polimorfismo em <code class="font-mono text-xs">getCargo()</code>.
+          </p>
+        </div>
+
+        <!-- 4. Associação Simples -->
+        <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 dark:text-white">4. Associação Simples (Linha Reta)</h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300">Sem Seta / Sem Losango</span>
+          </div>
+          <div class="rounded-xl bg-[#161616] p-3 border border-zinc-800 flex justify-center">
+            <svg class="w-full max-w-xs h-12" viewBox="0 0 320 48" fill="none">
+              <rect x="4" y="10" width="76" height="28" rx="4" fill="#191627" stroke="#818cf8" stroke-width="1.5"/>
+              <text x="42" y="28" text-anchor="middle" fill="#e0e7ff" font-size="12" font-weight="700" font-family="Inter">Voo</text>
+              <line x1="80" y1="24" x2="224" y2="24" stroke="#d4d4d8" stroke-width="1.6"/>
+              <text x="152" y="15" text-anchor="middle" fill="#e4e4e7" font-size="10.5" font-weight="600" font-family="Inter">Parte de / Chega em</text>
+              <rect x="224" y="10" width="92" height="28" rx="4" fill="#251616" stroke="#f87171" stroke-width="1.5"/>
+              <text x="270" y="28" text-anchor="middle" fill="#fee2e2" font-size="12" font-weight="700" font-family="Inter">Aeroporto</text>
+            </svg>
+          </div>
+          <p class="text-sm text-slate-600 dark:text-zinc-300">
+            <strong>Linha contínua simples (<code class="font-mono text-xs">──</code>):</strong> Usada em três ligações do diagrama: <code class="font-mono text-xs">Reserva ── Operador</code> (<code class="font-mono text-xs">0..*</code> e <code class="font-mono text-xs">0..1</code>) e nas duas ligações paralelas entre <code class="font-mono text-xs">Voo</code> e <code class="font-mono text-xs">Aeroporto</code> diferenciadas pelos nomes <code class="font-mono text-xs">"Parte de"</code> e <code class="font-mono text-xs">"Chega em"</code>.
+          </p>
+        </div>
+
+        <!-- 5. Implementação / Realização -->
+        <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 dark:text-white">5. Implementação / Realização</h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">Conceito Comparativo</span>
+          </div>
+          <div class="rounded-xl bg-[#161616] p-3 border border-zinc-800 flex justify-center">
+            <svg class="w-full max-w-xs h-12" viewBox="0 0 320 48" fill="none">
+              <rect x="4" y="10" width="96" height="28" rx="4" fill="#1c1c1e" stroke="#71717a" stroke-width="1.5"/>
+              <text x="52" y="28" text-anchor="middle" fill="#d4d4d8" font-size="11" font-weight="700" font-family="Inter">ClasseConcreta</text>
+              <line x1="100" y1="24" x2="196" y2="24" stroke="#a1a1aa" stroke-width="1.6" stroke-dasharray="5 4"/>
+              <polygon points="196,17 210,24 196,31" fill="#161616" stroke="#a1a1aa" stroke-width="1.6"/>
+              <rect x="212" y="10" width="104" height="28" rx="4" fill="#1c1c1e" stroke="#71717a" stroke-width="1.5"/>
+              <text x="264" y="28" text-anchor="middle" fill="#d4d4d8" font-size="11" font-weight="700" font-family="JetBrains Mono">&lt;&lt;interface&gt;&gt;</text>
+            </svg>
+          </div>
+          <p class="text-sm text-slate-600 dark:text-zinc-300">
+            <strong>Linha tracejada + triângulo vazio (<code class="font-mono text-xs">- -▷</code>):</strong> Não está no diagrama porque <strong>não usamos interface</strong>. Como <code class="font-mono text-xs">Aeroviario</code> e <code class="font-mono text-xs">Operador</code> herdam estado (<code class="font-mono text-xs">- nome</code>) e comportamento (<code class="font-mono text-xs">+ getNome()</code>), a modelagem correta é <strong>Generalização de Classe Abstrata</strong>.
+          </p>
+        </div>
+
+        <!-- 6. Navegabilidade -->
+        <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 dark:text-white">6. Navegabilidade (Diagrama vs Código)</h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300">Bidirecional no Desenho</span>
+          </div>
+          <p class="text-sm text-slate-600 dark:text-zinc-300 leading-relaxed">
+            <strong>No Diagrama EX03:</strong> Nenhuma associação possui ponta de seta aberta (<code class="font-mono text-xs">──&gt;</code>). Na UML, associações sem seta indicam <strong>navegabilidade não restrita (bidirecional no modelo conceitual)</strong>.<br/>
+            <strong>Na Implementação (<code class="font-mono text-xs">EX04.py</code>):</strong> A navegabilidade foi materializada pelos atributos privados de referência:
+          </p>
+          <ul class="text-xs text-slate-600 dark:text-zinc-400 list-disc pl-5 space-y-1">
+            <li><strong>Bidirecional no código:</strong> <code class="font-mono">Passageiro ↔ Reserva</code>, <code class="font-mono">Voo ↔ Reserva</code> e <code class="font-mono">Operador ↔ Reserva</code> (ambos guardam referência mútua).</li>
+            <li><strong>Unidirecional no código:</strong> <code class="font-mono">Voo → Aeroporto</code> (<code class="font-mono">__partida</code>, <code class="font-mono">__destino</code>) e <code class="font-mono">Voo → Aeroviario</code> (<code class="font-mono">__tripulantes</code>).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Multiplicidade / Cardinalidade -->
+      <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200 dark:border-zinc-800">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">7. Multiplicidade &amp; Cardinalidade no Diagrama EX03</h3>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-zinc-400">
+            Notações presentes: <code class="font-mono font-bold text-indigo-600 dark:text-indigo-400">1</code> (exatamente um) •
+            <code class="font-mono font-bold text-indigo-600 dark:text-indigo-400">0..1</code> (zero ou um / opcional) •
+            <code class="font-mono font-bold text-indigo-600 dark:text-indigo-400">0..*</code> (zero ou muitos).
+          </p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 border-b border-slate-200 dark:border-zinc-800">
+                <th class="py-3 px-4 font-semibold">Ligação no Diagrama EX03</th>
+                <th class="py-3 px-4 font-semibold">Multiplicidades</th>
+                <th class="py-3 px-4 font-semibold">Interpretação Semântica</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-zinc-800 text-slate-700 dark:text-zinc-300">
+              <tr>
+                <td class="py-3 px-4 font-semibold">Voo ◆── Reserva</td>
+                <td class="py-3 px-4 font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400">1 (Voo) e 0..* (Reserva)</td>
+                <td class="py-3 px-4">Um Voo compõe de zero a muitas Reservas; toda Reserva pertence obrigatoriamente a exatamente 1 Voo.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-semibold">Reserva ── Operador</td>
+                <td class="py-3 px-4 font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400">0..* (Reserva) e 0..1 (Operador)</td>
+                <td class="py-3 px-4">Um Operador gerencia de zero a muitas Reservas; uma Reserva pode ter 0 ou 1 Operador (pois o passageiro pode reservar sozinho).</td>
+              </tr>
+              <tr class="bg-amber-50/50 dark:bg-amber-950/15">
+                <td class="py-3 px-4 font-semibold">Passageiro ◇── Reserva</td>
+                <td class="py-3 px-4 font-mono text-xs font-bold text-amber-700 dark:text-amber-400">1 e 0..* (nota de leitura)</td>
+                <td class="py-3 px-4">
+                  Semanticamente, <strong>1 Passageiro</strong> possui <strong>0..* Reservas</strong> (conforme o losango vazio em <code class="font-mono text-xs">Passageiro</code> e o atributo <code class="font-mono text-xs">- reservas : Reserva[]</code>). <em>Dica de defesa:</em> no desenho, os rótulos <code class="font-mono text-xs">0..*</code> e <code class="font-mono text-xs">1</code> ficaram trocados nas pontas da linha vertical — se o professor notar, basta explicar que o losango vazio está corretamente em <code class="font-mono text-xs">Passageiro</code> (o todo) e cada reserva pertence a 1 passageiro.
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-semibold">Voo ◇── Aeroviario / Voo ── Aeroporto</td>
+                <td class="py-3 px-4 font-mono text-xs text-slate-500">Implícitas pelos atributos</td>
+                <td class="py-3 px-4">No desenho, estas linhas usam rótulos textuais (<code class="font-mono text-xs">"É tripulado por"</code>, <code class="font-mono text-xs">"Parte de"</code>, <code class="font-mono text-xs">"Chega em"</code>) sem números na linha, mas a multiplicidade está explícita nos atributos de <code class="font-mono text-xs">Voo</code>: <code class="font-mono text-xs">tripulantes : Aeroviario[]</code> (muitos) e <code class="font-mono text-xs">partida / destino : Aeroporto</code> (1 cada).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- ABA 4: CÓDIGO EX04.PY COMENTADO                                     -->
+    <!-- =================================================================== -->
+    <section id="tab-codigo" class="tab-panel hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">Código <code class="font-mono text-indigo-600 dark:text-indigo-400">EX04.py</code> Comentado por Blocos</h2>
+          <p class="text-sm text-slate-500 dark:text-zinc-400 mt-1">Análise completa da implementação em Python da Questão 4, fiel ao Diagrama EX03.</p>
+        </div>
+        <button id="copy-full-code" type="button" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-colors self-start sm:self-auto">
+          Copiar Código Completo (EX04.py)
+        </button>
+      </div>
+
+      <!-- Código Completo Oculto para Cópia Rápida -->
+      <pre id="full-python-code" class="hidden">from abc import ABC, abstractmethod
+
+
+class Aeroporto:
+    def __init__(self, nome, cidade, pais, capacidade):
+        self.__nome = nome
+        self.__cidade = cidade
+        self.__pais = pais
+        self.__capacidade = capacidade
+
+    def getPais(self):
+        return self.__pais
+
+
+class Funcionario(ABC):
+    def __init__(self, nome):
+        self.__nome = nome
+
+    def getNome(self):
+        return self.__nome
+
+    @abstractmethod
+    def getCargo(self):
+        pass
+
+
+class Aeroviario(Funcionario):
+    def __init__(self, nome, funcao):
+        super().__init__(nome)
+        self.__funcao = funcao
+
+    def getFuncao(self):
+        return self.__funcao
+
+    def getCargo(self):
+        return self.__funcao
+
+
+class Voo:
+    def __init__(self, codigo, horario, data, partida, destino, assentos):
+        self.__codigo = codigo
+        self.__horario = horario
+        self.__data = data
+        self.__partida = partida
+        self.__destino = destino
+        self.__assentos = assentos
+        self.__reservas = []
+        self.__tripulantes = []
+
+    def assentosLivres(self):
+        return self.__assentos - len(self.__reservas)
+
+    def getTripulacao(self):
+        return self.__tripulantes
+
+    def getTipo(self):
+        if self.__partida.getPais() == self.__destino.getPais():
+            return "NACIONAL"
+        else:
+            return "INTERNACIONAL"
+
+    def getReservas(self):
+        return self.__reservas
+
+
+class Reserva:
+    def __init__(self, codigo, passageiro, voo, operador):
+        self.__codigo = codigo
+        self.__paga = False
+        self.__passageiro = passageiro
+        self.__voo = voo
+        self.__operador = operador
+
+    def getCodigo(self):
+        return self.__codigo
+
+    def getPaga(self):
+        return self.__paga
+
+    def setPaga(self, paga):
+        self.__paga = paga
+
+    def getVoo(self):
+        return self.__voo
+
+
+class Passageiro:
+    def __init__(self, nome, cpf):
+        self.__nome = nome
+        self.__cpf = cpf
+        self.__reservas = []
+
+    def criarReserva(self, voo, operador=None):
+        if voo.assentosLivres() == 0:
+            return None
+        reserva = Reserva("R" + str(len(self.__reservas) + 1), self, voo, operador)
+        voo.getReservas().append(reserva)
+        self.__reservas.append(reserva)
+        return reserva
+
+    def cancelarReserva(self, reserva):
+        reserva.getVoo().getReservas().remove(reserva)
+        self.__reservas.remove(reserva)
+
+    def pagarReserva(self, reserva):
+        reserva.setPaga(True)
+
+    def getReservas(self):
+        return self.__reservas
+
+
+class Operador(Funcionario):
+    def __init__(self, nome, matricula):
+        super().__init__(nome)
+        self.__matricula = matricula
+        self.__reservas = []
+
+    def criarReserva(self, passageiro, voo):
+        reserva = passageiro.criarReserva(voo, self)
+        if reserva:
+            self.__reservas.append(reserva)
+        return reserva
+
+    def cancelarReserva(self, passageiro, reserva):
+        passageiro.cancelarReserva(reserva)
+        if reserva in self.__reservas:
+            self.__reservas.remove(reserva)
+
+    def getCargo(self):
+        return "Operador"
+
+
+natal = Aeroporto("Aeroporto de Natal", "Natal", "Brasil", 20)
+lisboa = Aeroporto("Humberto Delgado", "Lisboa", "Portugal", 40)
+
+voo = Voo("AD100", "08:00", "20/12/2026", natal, lisboa, 2)
+voo.getTripulacao().append(Aeroviario("Carlos", "Piloto"))
+
+passageiro = Passageiro(input("Nome do passageiro: "), "000")
+operador = Operador("Ana", "OP01")
+perfil = input("1 = passageiro, 2 = operador: ")
+
+
+def escolher_reserva():
+    for i, r in enumerate(passageiro.getReservas(), 1):
+        print(i, "-", r.getCodigo(), "| paga:", r.getPaga())
+    return passageiro.getReservas()[int(input("Qual reserva? ")) - 1]
+
+
+while True:
+    print("\nVoo", voo.getTipo(), "| assentos livres:", voo.assentosLivres())
+    print("1 Reservar | 2 Cancelar | 3 Pagar | 4 Tripulação | 0 Sair")
+    opcao = input("> ")
+
+    if opcao == "1":
+        if perfil == "1":
+            reserva = passageiro.criarReserva(voo)
+        else:
+            reserva = operador.criarReserva(passageiro, voo)
+        print("Reservado!" if reserva else "Voo cheio.")
+
+    elif opcao == "2":
+        reserva = escolher_reserva()
+        if perfil == "1":
+            passageiro.cancelarReserva(reserva)
+        else:
+            operador.cancelarReserva(passageiro, reserva)
+        print("Cancelada.")
+
+    elif opcao == "3":
+        if perfil == "1":
+            passageiro.pagarReserva(escolher_reserva())
+            print("Paga!")
+        else:
+            print("Só o passageiro paga.")
+
+    elif opcao == "4":
+        for a in voo.getTripulacao():
+            print("-", a.getNome(), a.getCargo())
+
+    elif opcao == "0":
+        break</pre>
+
+      <div class="space-y-5">
+        <!-- Bloco 1 -->
+        <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <div class="px-5 py-3 bg-slate-50 dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
+            <span class="font-bold text-sm text-slate-900 dark:text-white">Bloco 1 — Importação <code class="font-mono text-xs">abc</code> e Classe <code class="font-mono text-xs">Aeroporto</code></span>
+            <button data-copy="cb-1" class="copy-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700">Copiar</button>
+          </div>
+          <div class="p-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <pre id="cb-1" class="lg:col-span-7 rounded-xl bg-[#121212] text-slate-100 p-4 overflow-x-auto text-xs sm:text-sm font-mono leading-relaxed">from abc import ABC, abstractmethod
+
+
+class Aeroporto:
+    def __init__(self, nome, cidade, pais, capacidade):
+        self.__nome = nome
+        self.__cidade = cidade
+        self.__pais = pais
+        self.__capacidade = capacidade
+
+    def getPais(self):
+        return self.__pais</pre>
+            <div class="lg:col-span-5 text-sm text-slate-600 dark:text-zinc-300 space-y-2">
+              <p><strong>Módulo <code class="font-mono">abc</code>:</strong> Habilita classes abstratas nativas em Python via <code class="font-mono">ABC</code> e <code class="font-mono">@abstractmethod</code>.</p>
+              <p><strong>Encapsulamento (<code class="font-mono">__</code>):</strong> Os 4 atributos de <code class="font-mono">Aeroporto</code> são privados (duplo underline), espelhando o sinal <code class="font-mono">-</code> do diagrama, e <code class="font-mono">getPais()</code> expõe apenas o país para classificar voos.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 2 -->
+        <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <div class="px-5 py-3 bg-slate-50 dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
+            <span class="font-bold text-sm text-slate-900 dark:text-white">Bloco 2 — Classe Abstrata <code class="font-mono text-xs">Funcionario</code> e Subclasse <code class="font-mono text-xs">Aeroviario</code></span>
+            <button data-copy="cb-2" class="copy-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700">Copiar</button>
+          </div>
+          <div class="p-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <pre id="cb-2" class="lg:col-span-7 rounded-xl bg-[#121212] text-slate-100 p-4 overflow-x-auto text-xs sm:text-sm font-mono leading-relaxed">class Funcionario(ABC):
+    def __init__(self, nome):
+        self.__nome = nome
+
+    def getNome(self):
+        return self.__nome
+
+    @abstractmethod
+    def getCargo(self):
+        pass
+
+
+class Aeroviario(Funcionario):
+    def __init__(self, nome, funcao):
+        super().__init__(nome)
+        self.__funcao = funcao
+
+    def getFuncao(self):
+        return self.__funcao
+
+    def getCargo(self):
+        return self.__funcao</pre>
+            <div class="lg:col-span-5 text-sm text-slate-600 dark:text-zinc-300 space-y-2">
+              <p><strong>Abstração &amp; Herança:</strong> <code class="font-mono">Funcionario</code> não pode ser instanciada diretamente. <code class="font-mono">Aeroviario</code> herda de <code class="font-mono">Funcionario</code> e invoca <code class="font-mono">super().__init__(nome)</code>.</p>
+              <p><strong>Polimorfismo:</strong> <code class="font-mono">getCargo()</code> é sobrescrito em <code class="font-mono">Aeroviario</code> retornando <code class="font-mono">self.__funcao</code> (ex: <code class="font-mono">"Piloto"</code>), enquanto em <code class="font-mono">Operador</code> retorna <code class="font-mono">"Operador"</code>.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 3 -->
+        <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <div class="px-5 py-3 bg-slate-50 dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
+            <span class="font-bold text-sm text-slate-900 dark:text-white">Bloco 3 — Classe <code class="font-mono text-xs">Voo</code> (Assentos Livres &amp; Nacional/Internacional)</span>
+            <button data-copy="cb-3" class="copy-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700">Copiar</button>
+          </div>
+          <div class="p-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <pre id="cb-3" class="lg:col-span-7 rounded-xl bg-[#121212] text-slate-100 p-4 overflow-x-auto text-xs sm:text-sm font-mono leading-relaxed">class Voo:
+    def __init__(self, codigo, horario, data, partida, destino, assentos):
+        self.__codigo = codigo
+        self.__horario = horario
+        self.__data = data
+        self.__partida = partida
+        self.__destino = destino
+        self.__assentos = assentos
+        self.__reservas = []
+        self.__tripulantes = []
+
+    def assentosLivres(self):
+        return self.__assentos - len(self.__reservas)
+
+    def getTripulacao(self):
+        return self.__tripulantes
+
+    def getTipo(self):
+        if self.__partida.getPais() == self.__destino.getPais():
+            return "NACIONAL"
+        else:
+            return "INTERNACIONAL"
+
+    def getReservas(self):
+        return self.__reservas</pre>
+            <div class="lg:col-span-5 text-sm text-slate-600 dark:text-zinc-300 space-y-2">
+              <p><strong>Cálculo Dinâmico:</strong> <code class="font-mono">assentosLivres()</code> calcula <code class="font-mono">self.__assentos - len(self.__reservas)</code> em tempo real, evitando dessincronização.</p>
+              <p><strong>Regra de Negócio Automática:</strong> <code class="font-mono">getTipo()</code> compara o país do aeroporto de partida com o de destino para retornar <code class="font-mono">"NACIONAL"</code> ou <code class="font-mono">"INTERNACIONAL"</code>.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 4 -->
+        <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <div class="px-5 py-3 bg-slate-50 dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
+            <span class="font-bold text-sm text-slate-900 dark:text-white">Bloco 4 — Classe <code class="font-mono text-xs">Reserva</code></span>
+            <button data-copy="cb-4" class="copy-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700">Copiar</button>
+          </div>
+          <div class="p-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <pre id="cb-4" class="lg:col-span-7 rounded-xl bg-[#121212] text-slate-100 p-4 overflow-x-auto text-xs sm:text-sm font-mono leading-relaxed">class Reserva:
+    def __init__(self, codigo, passageiro, voo, operador):
+        self.__codigo = codigo
+        self.__paga = False
+        self.__passageiro = passageiro
+        self.__voo = voo
+        self.__operador = operador
+
+    def getCodigo(self):
+        return self.__codigo
+
+    def getPaga(self):
+        return self.__paga
+
+    def setPaga(self, paga):
+        self.__paga = paga
+
+    def getVoo(self):
+        return self.__voo</pre>
+            <div class="lg:col-span-5 text-sm text-slate-600 dark:text-zinc-300 space-y-2">
+              <p><strong>Estado Inicial Seguro:</strong> Toda reserva inicia com <code class="font-mono">self.__paga = False</code> e só muda para <code class="font-mono">True</code> via <code class="font-mono">setPaga(True)</code>.</p>
+              <p><strong>Vínculos Exatos:</strong> Armazena referências para <code class="font-mono">__passageiro</code>, <code class="font-mono">__voo</code> e <code class="font-mono">__operador</code> (podendo ser <code class="font-mono">None</code> quando reservada pelo próprio passageiro).</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 5 -->
+        <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <div class="px-5 py-3 bg-slate-50 dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
+            <span class="font-bold text-sm text-slate-900 dark:text-white">Bloco 5 — <code class="font-mono text-xs">Passageiro</code> &amp; <code class="font-mono text-xs">Operador</code> (Delegação e Princípio DRY)</span>
+            <button data-copy="cb-5" class="copy-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700">Copiar</button>
+          </div>
+          <div class="p-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <pre id="cb-5" class="lg:col-span-7 rounded-xl bg-[#121212] text-slate-100 p-4 overflow-x-auto text-xs sm:text-sm font-mono leading-relaxed">class Passageiro:
+    def __init__(self, nome, cpf):
+        self.__nome = nome
+        self.__cpf = cpf
+        self.__reservas = []
+
+    def criarReserva(self, voo, operador=None):
+        if voo.assentosLivres() == 0:
+            return None
+        reserva = Reserva("R" + str(len(self.__reservas) + 1), self, voo, operador)
+        voo.getReservas().append(reserva)
+        self.__reservas.append(reserva)
+        return reserva
+
+    def cancelarReserva(self, reserva):
+        reserva.getVoo().getReservas().remove(reserva)
+        self.__reservas.remove(reserva)
+
+    def pagarReserva(self, reserva):
+        reserva.setPaga(True)
+
+    def getReservas(self):
+        return self.__reservas
+
+
+class Operador(Funcionario):
+    def __init__(self, nome, matricula):
+        super().__init__(nome)
+        self.__matricula = matricula
+        self.__reservas = []
+
+    def criarReserva(self, passageiro, voo):
+        reserva = passageiro.criarReserva(voo, self)
+        if reserva:
+            self.__reservas.append(reserva)
+        return reserva
+
+    def cancelarReserva(self, passageiro, reserva):
+        passageiro.cancelarReserva(reserva)
+        if reserva in self.__reservas:
+            self.__reservas.remove(reserva)
+
+    def getCargo(self):
+        return "Operador"</pre>
+            <div class="lg:col-span-5 text-sm text-slate-600 dark:text-zinc-300 space-y-2">
+              <p><strong>Delegação &amp; Reuso (DRY):</strong> <code class="font-mono">Operador.criarReserva()</code> delega a operação para <code class="font-mono">passageiro.criarReserva(voo, self)</code>, centralizando a verificação de assentos livres e mantendo as listas de <code class="font-mono">Voo</code>, <code class="font-mono">Passageiro</code> e <code class="font-mono">Operador</code> sempre sincronizadas.</p>
+              <p><strong>Separação de Responsabilidades:</strong> Apenas <code class="font-mono">Passageiro</code> possui <code class="font-mono">pagarReserva()</code>.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 6 -->
+        <div class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <div class="px-5 py-3 bg-slate-50 dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
+            <span class="font-bold text-sm text-slate-900 dark:text-white">Bloco 6 — Interface Interativa CLI (Questão 4)</span>
+            <button data-copy="cb-6" class="copy-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700">Copiar</button>
+          </div>
+          <div class="p-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <pre id="cb-6" class="lg:col-span-7 rounded-xl bg-[#121212] text-slate-100 p-4 overflow-x-auto text-xs sm:text-sm font-mono leading-relaxed">natal = Aeroporto("Aeroporto de Natal", "Natal", "Brasil", 20)
+lisboa = Aeroporto("Humberto Delgado", "Lisboa", "Portugal", 40)
+
+voo = Voo("AD100", "08:00", "20/12/2026", natal, lisboa, 2)
+voo.getTripulacao().append(Aeroviario("Carlos", "Piloto"))
+
+passageiro = Passageiro(input("Nome do passageiro: "), "000")
+operador = Operador("Ana", "OP01")
+perfil = input("1 = passageiro, 2 = operador: ")
+
+def escolher_reserva():
+    for i, r in enumerate(passageiro.getReservas(), 1):
+        print(i, "-", r.getCodigo(), "| paga:", r.getPaga())
+    return passageiro.getReservas()[int(input("Qual reserva? ")) - 1]
+
+while True:
+    print("\nVoo", voo.getTipo(), "| assentos livres:", voo.assentosLivres())
+    print("1 Reservar | 2 Cancelar | 3 Pagar | 4 Tripulação | 0 Sair")
+    opcao = input("&gt; ")
+
+    if opcao == "1":
+        if perfil == "1":
+            reserva = passageiro.criarReserva(voo)
+        else:
+            reserva = operador.criarReserva(passageiro, voo)
+        print("Reservado!" if reserva else "Voo cheio.")
+    elif opcao == "2":
+        reserva = escolher_reserva()
+        if perfil == "1":
+            passageiro.cancelarReserva(reserva)
+        else:
+            operador.cancelarReserva(passageiro, reserva)
+        print("Cancelada.")
+    elif opcao == "3":
+        if perfil == "1":
+            passageiro.pagarReserva(escolher_reserva())
+            print("Paga!")
+        else:
+            print("Só o passageiro paga.")
+    elif opcao == "4":
+        for a in voo.getTripulacao():
+            print("-", a.getNome(), a.getCargo())
+    elif opcao == "0":
+        break</pre>
+            <div class="lg:col-span-5 text-sm text-slate-600 dark:text-zinc-300 space-y-2">
+              <p><strong>Demonstração Prática:</strong> Instancia Natal (Brasil) e Lisboa (Portugal) no voo internacional <code class="font-mono">AD100</code> com 2 assentos e o piloto <code class="font-mono">Carlos</code>.</p>
+              <p><strong>Controle de Acesso por Perfil:</strong> No loop <code class="font-mono">while True</code>, se o usuário escolher <code class="font-mono">perfil == "2"</code> (Operador) e tentar a opção <code class="font-mono">3</code> (Pagar), o sistema bloqueia e exibe <code class="font-mono">"Só o passageiro paga."</code>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- ABA 5: ROTEIROS DA DEFESA ORAL                                      -->
+    <!-- =================================================================== -->
+    <section id="tab-roteiros" class="tab-panel hidden space-y-6">
+      <!-- Barra de Controles (Teleprompter, Fonte A+/A-, Cronômetro) -->
+      <div class="non-teleprompter rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 p-4 sm:p-5 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">Roteiros de Fala — Padrão Nota Máxima</h2>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-zinc-400">Dois textos prontos e 100% alinhados ao seu diagrama EX03 e ao código EX04.py.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- Tamanho da Fonte -->
+          <div class="flex items-center gap-1 bg-slate-100 dark:bg-zinc-900 p-1 rounded-xl border border-slate-200 dark:border-zinc-800">
+            <button id="font-dec" type="button" class="px-2.5 py-1 rounded-lg text-xs font-bold hover:bg-white dark:hover:bg-zinc-800">A-</button>
+            <button id="font-inc" type="button" class="px-2.5 py-1 rounded-lg text-xs font-bold hover:bg-white dark:hover:bg-zinc-800">A+</button>
+          </div>
+
+          <!-- Cronômetro -->
+          <div class="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800">
+            <span id="timer-display" class="font-mono font-bold text-sm w-14 text-center">00:00</span>
+            <button id="timer-start" type="button" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white">Play</button>
+            <button id="timer-reset" type="button" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-300 dark:bg-zinc-700 hover:bg-slate-400 dark:hover:bg-zinc-600">Reset</button>
+          </div>
+
+          <!-- Modo Teleprompter -->
+          <button id="teleprompter-btn" type="button" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">
+            Modo Teleprompter
+          </button>
+        </div>
+      </div>
+
+      <!-- Texto 1: Diagrama UML -->
+      <article class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 bg-indigo-600 text-white flex items-center justify-between gap-2">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-indigo-200">Texto 1 • Questão 3</span>
+            <h3 class="text-lg font-bold">Roteiro de Apresentação do Diagrama UML (Diagrama EX03)</h3>
+          </div>
+          <button data-copy="roteiro-1" class="copy-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white/15 hover:bg-white/25 text-white">Copiar Texto</button>
+        </div>
+        <div id="roteiro-1" style="font-size: 16px;" class="speech-box p-6 sm:p-8 space-y-4 text-slate-700 dark:text-zinc-200 leading-relaxed">
+          <p>
+            "Bom dia/boa tarde, professor. Para resolver a Questão 3, modelamos o sistema de reservas da empresa aérea com <strong>7 classes</strong>, colocando a classe <strong>Voo</strong> como o núcleo da operação. Nela encapsulamos com visibilidade privada (sinal de menos) o código, o horário, a data, a quantidade de assentos, as referências aos aeroportos de partida e destino, além das listas de reservas e de tripulantes. Como interface pública (sinal de mais), o Voo expõe métodos para calcular os assentos livres, retornar a tripulação, identificar se o voo é nacional ou internacional e listar suas reservas."
+          </p>
+          <p>
+            "A partir de <strong>Voo</strong>, conectamos a classe <strong>Aeroporto</strong> por meio de duas associações simples paralelas, sem setas de navegabilidade — portanto conceitualmente bidirecionais no diagrama — diferenciadas pelos papéis <strong>'Parte de'</strong> e <strong>'Chega em'</strong>. Na classe Aeroporto, além de nome, cidade e capacidade de decolagens por hora, incluímos o atributo privado <strong>país</strong> e o método público <code class="font-mono">getPais()</code>, permitindo que o próprio Voo deduza automaticamente se é nacional ou internacional comparando os países de origem e destino."
+          </p>
+          <p>
+            "Nos relacionamentos todo-parte, aplicamos com rigor a diferença entre <strong>Composição</strong> e <strong>Agregação</strong>. Entre <strong>Voo e Reserva</strong> utilizamos <strong>Composição</strong> — indicada pelo losango preenchido encostado em Voo — com multiplicidade <strong>1 para 0..*</strong>, pois existe dependência forte de ciclo de vida: uma reserva só existe vinculada a um voo específico. Já entre <strong>Voo e Aeroviario</strong> utilizamos <strong>Agregação</strong> — losango vazio encostado em Voo com o rótulo <strong>'É tripulado por'</strong> — porque o aeroviário possui ciclo de vida independente: ele continua sendo funcionário da empresa após o voo e pode tripular vários voos. Da mesma forma, modelamos <strong>Passageiro</strong> agregando <strong>Reserva</strong> com losango vazio, pois o passageiro agrupa suas reservas sem que elas definam sua existência."
+          </p>
+          <p>
+            "Para os funcionários da companhia, aplicamos <strong>Generalização (herança)</strong> — representada pela linha contínua com triângulo vazio — partindo das subclasses <strong>Operador</strong> e <strong>Aeroviario</strong> para a superclasse <strong>Funcionario</strong>. Marcamos Funcionario com o estereótipo <code class="font-mono">&lt;&lt;abstract&gt;&gt;</code> e o nome em itálico porque ela não deve ser instanciada diretamente. Optamos por uma <strong>classe abstrata via generalização em vez de uma interface (implementação)</strong> porque as subclasses compartilham estado (<code class="font-mono">nome</code>) e comportamento concreto (<code class="font-mono">getNome()</code>), além do método polimórfico <code class="font-mono">getCargo()</code>."
+          </p>
+          <p>
+            "Por fim, fechando as regras de negócio: <strong>Passageiro</strong> possui os métodos para criar, cancelar e pagar reservas, enquanto <strong>Operador</strong> possui apenas criar e cancelar reservas, ligando-se a <strong>Reserva</strong> por uma associação simples com multiplicidade <strong>0..* no lado de Reserva e 0..1 no lado de Operador</strong> — refletindo que uma reserva pode ser feita tanto com o auxílio de um operador (1) quanto diretamente pelo passageiro sozinho (0)."
+          </p>
+        </div>
+      </article>
+
+      <!-- Texto 2: Código EX04.py -->
+      <article class="rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 bg-emerald-700 text-white flex items-center justify-between gap-2">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-emerald-200">Texto 2 • Questão 4</span>
+            <h3 class="text-lg font-bold">Roteiro de Apresentação do Código Python (EX04.py)</h3>
+          </div>
+          <button data-copy="roteiro-2" class="copy-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white/15 hover:bg-white/25 text-white">Copiar Texto</button>
+        </div>
+        <div id="roteiro-2" style="font-size: 16px;" class="speech-box p-6 sm:p-8 space-y-4 text-slate-700 dark:text-zinc-200 leading-relaxed">
+          <p>
+            "Agora, apresentando a Questão 4, implementamos o sistema em Python no arquivo <strong>EX04.py</strong> mantendo correspondência de cem por cento com o diagrama de classes."
+          </p>
+          <p>
+            "Logo no início, importamos <code class="font-mono">ABC</code> e <code class="font-mono">abstractmethod</code> do módulo nativo <code class="font-mono">abc</code> para concretizar a <strong>Abstração</strong> da classe <strong>Funcionario</strong>, garantindo que ninguém consiga instanciar um funcionário genérico e obrigando <strong>Aeroviario</strong> e <strong>Operador</strong> a sobrescreverem <code class="font-mono">getCargo()</code>. Aplicamos também o <strong>Encapsulamento</strong> em todas as sete classes usando duplo underline (<code class="font-mono">__</code>) nos atributos privados, e <strong>Herança</strong> nas subclasses com <code class="font-mono">super().__init__(nome)</code>. O <strong>Polimorfismo</strong> aparece na listagem da tripulação: ao chamar <code class="font-mono">getCargo()</code>, o aeroviário responde com sua função específica, como 'Piloto', enquanto o operador responde 'Operador'."
+          </p>
+          <p>
+            "Na classe <strong>Voo</strong>, evitamos inconsistência de dados calculando <code class="font-mono">assentosLivres()</code> dinamicamente a partir do total de assentos menos o tamanho da lista <code class="font-mono">__reservas</code>. E no método <code class="font-mono">getTipo()</code>, comparamos <code class="font-mono">self.__partida.getPais()</code> com <code class="font-mono">self.__destino.getPais()</code> para classificar automaticamente o voo como <code class="font-mono">'NACIONAL'</code> ou <code class="font-mono">'INTERNACIONAL'</code>."
+          </p>
+          <p>
+            "Na interação entre <strong>Passageiro</strong> e <strong>Operador</strong>, aplicamos o princípio de reuso para não duplicar regras de negócio: quando o operador chama <code class="font-mono">criarReserva(passageiro, voo)</code>, ele delega a criação para <code class="font-mono">passageiro.criarReserva(voo, self)</code>, passando a si mesmo como operador responsável. Dessa forma, a verificação de lotação do voo (<code class="font-mono">assentosLivres() == 0</code>) e a atualização bilateral das listas de reservas ficam centralizadas em um único ponto, e o cancelamento remove a reserva tanto do voo quanto do passageiro e do operador."
+          </p>
+          <p>
+            "Por último, construímos a <strong>interface de interação com o usuário</strong> via terminal em um loop <code class="font-mono">while True</code>. Para facilitar a demonstração prática, instanciamos os aeroportos de Natal e Lisboa no voo internacional <code class="font-mono">AD100</code> com 2 assentos e o piloto Carlos. O usuário escolhe se quer operar o sistema com o perfil <strong>1 (Passageiro)</strong> ou <strong>2 (Operador)</strong>, podendo reservar, cancelar, pagar e consultar a tripulação — e se tentar pagar logado como Operador, o sistema bloqueia a operação reforçando a regra de negócio do enunciado."
+          </p>
+        </div>
+      </article>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- ABA 6: PERGUNTAS DA BANCA (Q&A)                                     -->
+    <!-- =================================================================== -->
+    <section id="tab-banca" class="tab-panel hidden space-y-6">
+      <div>
+        <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">Perguntas Estratégicas da Banca (Q&amp;A)</h2>
+        <p class="text-sm text-slate-500 dark:text-zinc-400 mt-1">
+          7 perguntas clássicas que o professor pode fazer sobre o <strong>Diagrama EX03</strong> e o código <strong>EX04.py</strong>. Clique para revelar a resposta modelo.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <!-- Q1 -->
+        <div class="faq-item rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <button type="button" class="faq-btn w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-zinc-900/60">
+            <span class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">1. Qual a diferença entre o losango preenchido em Voo–Reserva e o losango vazio em Voo–Aeroviario?</span>
+            <svg class="faq-icon w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer hidden px-6 pb-5 pt-2 text-sm text-slate-600 dark:text-zinc-300 border-t border-slate-100 dark:border-zinc-800 leading-relaxed">
+            <strong>Resposta:</strong> O losango preenchido indica <strong>Composição</strong> (todo-parte forte): uma <code class="font-mono text-xs">Reserva</code> depende existencialmente do <code class="font-mono text-xs">Voo</code>; se o voo for excluído, suas reservas não fazem sentido sozinhas. Já o losango vazio indica <strong>Agregação</strong> (todo-parte fraca): o <code class="font-mono text-xs">Aeroviario</code> tem ciclo de vida independente, continua existindo como funcionário após o voo e pode tripular vários voos diferentes.
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="faq-item rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <button type="button" class="faq-btn w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-zinc-900/60">
+            <span class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">2. Por que vocês não criaram subclasses VooNacional e VooInternacional herdando de Voo?</span>
+            <svg class="faq-icon w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer hidden px-6 pb-5 pt-2 text-sm text-slate-600 dark:text-zinc-300 border-t border-slate-100 dark:border-zinc-800 leading-relaxed">
+            <strong>Resposta:</strong> Porque voos nacionais e internacionais possuem exatamente os <strong>mesmos atributos e comportamentos</strong> no domínio do problema — a única diferença é a classificação derivada da comparação entre o país de origem e o país de destino. Usar <code class="font-mono text-xs">getTipo() : String</code> comparando <code class="font-mono text-xs">partida.getPais()</code> e <code class="font-mono text-xs">destino.getPais()</code> evita explosão desnecessária de subclasses e impede inconsistências (como instanciar um <code class="font-mono text-xs">VooNacional</code> entre Natal e Lisboa).
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="faq-item rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <button type="button" class="faq-btn w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-zinc-900/60">
+            <span class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">3. Por que Funcionario é uma Classe Abstrata (Generalização) e não uma Interface (Implementação)?</span>
+            <svg class="faq-icon w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer hidden px-6 pb-5 pt-2 text-sm text-slate-600 dark:text-zinc-300 border-t border-slate-100 dark:border-zinc-800 leading-relaxed">
+            <strong>Resposta:</strong> Porque <code class="font-mono text-xs">Operador</code> e <code class="font-mono text-xs">Aeroviario</code> compartilham <strong>estado</strong> (<code class="font-mono text-xs">- nome : String</code>) e <strong>implementação concreta</strong> (<code class="font-mono text-xs">+ getNome()</code>), além de exigirem o contrato polimórfico <code class="font-mono text-xs">+ getCargo() : String</code>. Interfaces servem apenas para contratos puramente comportamentais sem atributos; quando há reuso de estado e métodos concretos, a classe abstrata via generalização é a escolha correta.
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="faq-item rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <button type="button" class="faq-btn w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-zinc-900/60">
+            <span class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">4. As linhas 'Parte de' e 'Chega em' entre Voo e Aeroporto não têm setas. O que isso significa na UML?</span>
+            <svg class="faq-icon w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer hidden px-6 pb-5 pt-2 text-sm text-slate-600 dark:text-zinc-300 border-t border-slate-100 dark:border-zinc-800 leading-relaxed">
+            <strong>Resposta:</strong> Na UML, associações sem seta nas extremidades indicam <strong>navegabilidade não restrita (bidirecional no modelo conceitual)</strong>, diferenciadas pelos nomes de papel <code class="font-mono text-xs">"Parte de"</code> e <code class="font-mono text-xs">"Chega em"</code>. Na implementação (<code class="font-mono text-xs">EX04.py</code>), navegamos no sentido necessário para o problema: <code class="font-mono text-xs">Voo</code> mantém os atributos privados <code class="font-mono text-xs">__partida</code> e <code class="font-mono text-xs">__destino</code> apontando para <code class="font-mono text-xs">Aeroporto</code>.
+          </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="faq-item rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <button type="button" class="faq-btn w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-zinc-900/60">
+            <span class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">5. Por que a multiplicidade no lado de Operador em Reserva é 0..1?</span>
+            <svg class="faq-icon w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer hidden px-6 pb-5 pt-2 text-sm text-slate-600 dark:text-zinc-300 border-t border-slate-100 dark:border-zinc-800 leading-relaxed">
+            <strong>Resposta:</strong> Porque o enunciado permite que tanto o <strong>passageiro</strong> quanto o <strong>operador</strong> criem reservas. Quando o próprio passageiro cria a reserva (autoatendimento), ela tem <strong>0</strong> operadores vinculados (<code class="font-mono text-xs">operador=None</code> no Python); quando é emitida por um funcionário, tem <strong>1</strong> operador responsável. Por isso <code class="font-mono text-xs">0..1</code>.
+          </div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="faq-item rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <button type="button" class="faq-btn w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-zinc-900/60">
+            <span class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">6. Como o encapsulamento do diagrama (sinal '-') foi garantido no código Python?</span>
+            <svg class="faq-icon w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer hidden px-6 pb-5 pt-2 text-sm text-slate-600 dark:text-zinc-300 border-t border-slate-100 dark:border-zinc-800 leading-relaxed">
+            <strong>Resposta:</strong> Usando <strong>duplo underline (<code class="font-mono text-xs">__</code>)</strong> em todos os atributos (como <code class="font-mono text-xs">self.__nome</code>, <code class="font-mono text-xs">self.__assentos</code>, <code class="font-mono text-xs">self.__paga</code>), o que ativa o mecanismo de <em>name mangling</em> do Python e impede alteração direta externa — por exemplo, impedindo que alguém mude <code class="font-mono text-xs">reserva.__paga = True</code> sem passar por <code class="font-mono text-xs">passageiro.pagarReserva()</code>.
+          </div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="faq-item rounded-2xl bg-white dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <button type="button" class="faq-btn w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-zinc-900/60">
+            <span class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">7. Por que Operador.criarReserva() chama passageiro.criarReserva(voo, self) por dentro?</span>
+            <svg class="faq-icon w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer hidden px-6 pb-5 pt-2 text-sm text-slate-600 dark:text-zinc-300 border-t border-slate-100 dark:border-zinc-800 leading-relaxed">
+            <strong>Resposta:</strong> Para aplicar o princípio <strong>DRY (<em>Don't Repeat Yourself</em>)</strong>. Em vez de duplicar a lógica de verificar <code class="font-mono text-xs">voo.assentosLivres() == 0</code>, gerar o código <code class="font-mono text-xs">"R..."</code> e inserir a reserva nas listas de <code class="font-mono text-xs">Voo</code> e <code class="font-mono text-xs">Passageiro</code>, o operador delega a execução para <code class="font-mono text-xs">Passageiro</code> passando <code class="font-mono text-xs">self</code> como operador e registra a reserva criada na sua própria lista <code class="font-mono text-xs">self.__reservas</code>.
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="border-t border-slate-200 dark:border-zinc-800 py-5 text-center text-xs text-slate-500 dark:text-zinc-400">
+    Guia de Defesa Oral UML &amp; POO • IFRN • 100% fiel ao Diagrama EX03.png &amp; EX04.py
+  </footer>
+
+  <!-- Scripts Interativos -->
+  <script>
+    (function () {
+      // 1. Tema Claro / Escuro (padrão dark inspirado no Diagrama EX03.png)
+      const htmlEl = document.documentElement;
+      const savedTheme = localStorage.getItem('theme-ex03');
+      if (savedTheme === 'light') {
+        htmlEl.classList.remove('dark');
+      } else {
+        htmlEl.classList.add('dark');
+      }
+
+      document.getElementById('theme-toggle').addEventListener('click', () => {
+        htmlEl.classList.toggle('dark');
+        localStorage.setItem('theme-ex03', htmlEl.classList.contains('dark') ? 'dark' : 'light');
+      });
+
+      // 2. Navegação entre as 6 Abas
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabPanels = document.querySelectorAll('.tab-panel');
+
+      tabBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const target = btn.getAttribute('data-tab');
+
+          tabBtns.forEach((b) => {
+            b.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
+            b.classList.add('text-slate-600', 'dark:text-zinc-300', 'hover:bg-slate-100', 'dark:hover:bg-zinc-800');
+          });
+
+          btn.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+          btn.classList.remove('text-slate-600', 'dark:text-zinc-300', 'hover:bg-slate-100', 'dark:hover:bg-zinc-800');
+
+          tabPanels.forEach((p) => p.classList.toggle('hidden', p.id !== target));
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      });
+
+      // 3. Inspetor Interativo do Diagrama EX03 SVG
+      const inspectorData = {
+        'cls-passageiro': {
+          badge: 'Classe Concreta • Roxo',
+          title: 'Passageiro',
+          html: `
+            <p><strong>Atributos privados:</strong> <code>- nome : String</code>, <code>- cpf : String</code>, <code>- reservas : Reserva[]</code>.</p>
+            <p><strong>Métodos públicos:</strong> <code>+ criarReserva(voo, operador)</code>, <code>+ cancelarReserva(reserva)</code>, <code>+ pagarReserva(reserva)</code>, <code>+ getReservas()</code>.</p>
+            <p><strong>Destaque na defesa:</strong> É a única classe que possui <code>pagarReserva()</code>. Quando cria uma reserva por conta própria, o parâmetro <code>operador</code> recebe <code>None</code>.</p>
+          `
+        },
+        'cls-reserva': {
+          badge: 'Classe Mediadora • Verde-água',
+          title: 'Reserva',
+          html: `
+            <p><strong>Atributos privados:</strong> <code>- codigo : String</code>, <code>- paga : boolean</code>, <code>- passageiro : Passageiro</code>, <code>- voo : Voo</code>, <code>- operador : Operador</code>.</p>
+            <p><strong>Métodos públicos:</strong> <code>+ getCodigo()</code>, <code>+ getPaga()</code>, <code>+ setPaga(paga)</code>, <code>+ getVoo()</code>.</p>
+            <p><strong>Destaque na defesa:</strong> Centraliza os vínculos da operação e nasce com <code>paga = False</code>.</p>
+          `
+        },
+        'cls-operador': {
+          badge: 'Subclasse • Laranja',
+          title: 'Operador (herda de Funcionario)',
+          html: `
+            <p><strong>Atributos privados:</strong> <code>- matricula : String</code>, <code>- reservas : Reserva[]</code> (além de <code>- nome</code> herdado de <code>Funcionario</code>).</p>
+            <p><strong>Métodos públicos:</strong> <code>+ criarReserva(passageiro, voo)</code>, <code>+ cancelarReserva(passageiro, reserva)</code>, <code>+ getCargo() : String</code>.</p>
+            <p><strong>Destaque na defesa:</strong> Pode criar e cancelar reservas para passageiros, mas <strong>não</strong> possui método de pagamento.</p>
+          `
+        },
+        'cls-funcionario': {
+          badge: 'Classe Abstrata • Branco/Itálico',
+          title: '<<abstract>> Funcionario',
+          html: `
+            <p><strong>Notação UML:</strong> O estereótipo <code>&lt;&lt;abstract&gt;&gt;</code> e o nome <em>Funcionario</em> em itálico indicam que não pode ser instanciada diretamente.</p>
+            <p><strong>Membros:</strong> <code>- nome : String</code>, <code>+ getNome()</code> e o método abstrato <code>+ getCargo() : String</code>, sobrescrito polimorficamente em <code>Operador</code> e <code>Aeroviario</code>.</p>
+          `
+        },
+        'cls-aeroviario': {
+          badge: 'Subclasse • Verde',
+          title: 'Aeroviario (herda de Funcionario)',
+          html: `
+            <p><strong>Atributo privado:</strong> <code>- funcao : String</code> (ex: Piloto, Copiloto, Comissário).</p>
+            <p><strong>Métodos públicos:</strong> <code>+ getFuncao()</code> e <code>+ getCargo() : String</code> (retorna sua própria <code>funcao</code>).</p>
+            <p><strong>Destaque na defesa:</strong> Compõe a tripulação de um <code>Voo</code> por meio de uma <strong>Agregação</strong>.</p>
+          `
+        },
+        'cls-voo': {
+          badge: 'Classe Central • Índigo',
+          title: 'Voo',
+          html: `
+            <p><strong>Atributos privados:</strong> <code>codigo</code>, <code>horario</code>, <code>data</code>, <code>assentos</code>, <code>partida : Aeroporto</code>, <code>destino : Aeroporto</code>, <code>reservas : Reserva[]</code> e <code>tripulantes : Aeroviario[]</code>.</p>
+            <p><strong>Métodos públicos:</strong> <code>+ assentosLivres() : int</code>, <code>+ getTripulacao()</code>, <code>+ getTipo() : String</code> (NACIONAL ou INTERNACIONAL) e <code>+ getReservas()</code>.</p>
+          `
+        },
+        'cls-aeroporto': {
+          badge: 'Infraestrutura • Coral',
+          title: 'Aeroporto',
+          html: `
+            <p><strong>Atributos privados:</strong> <code>- nome : String</code>, <code>- cidade : String</code>, <code>- pais : String</code> e <code>- capacidade : int</code>.</p>
+            <p><strong>Método público:</strong> <code>+ getPais()</code> — utilizado por <code>Voo.getTipo()</code> para verificar se partida e destino pertencem ao mesmo país.</p>
+          `
+        },
+        'rel-pass-res': {
+          badge: 'Agregação (Losango Vazio)',
+          title: 'Passageiro ◇── Reserva',
+          html: `
+            <p><strong>Tipo:</strong> <strong>Agregação</strong> (losango vazio encostado em <code>Passageiro</code>), indicando relação todo-parte independente.</p>
+            <p><strong>Nota sobre as multiplicidades:</strong> Semanticamente, <strong>1 Passageiro</strong> possui <strong>0..* Reservas</strong> (como mostra o losango vazio em Passageiro e o atributo <code>reservas : Reserva[]</code>). No desenho, os rótulos <code>0..*</code> e <code>1</code> ficaram invertidos nas extremidades da linha vertical — ótimo detalhe para esclarecer com segurança se o professor perguntar!</p>
+          `
+        },
+        'rel-res-op': {
+          badge: 'Associação Simples',
+          title: 'Reserva ── Operador (0..* para 0..1)',
+          html: `
+            <p><strong>Tipo:</strong> <strong>Associação simples</strong> (linha reta sem seta e sem losango).</p>
+            <p><strong>Multiplicidade:</strong> <code>0..*</code> no lado de <code>Reserva</code> e <code>0..1</code> no lado de <code>Operador</code>. O <code>0..1</code> indica que o operador é opcional (o passageiro pode reservar sozinho).</p>
+          `
+        },
+        'rel-voo-res': {
+          badge: 'Composição (Losango Preenchido)',
+          title: 'Voo ◆── Reserva (1 para 0..*)',
+          html: `
+            <p><strong>Tipo:</strong> <strong>Composição</strong> (losango preenchido encostado em <code>Voo</code>).</p>
+            <p><strong>Significado:</strong> Relação todo-parte <strong>forte</strong> com dependência de ciclo de vida. Um <code>Voo</code> (1) compõe de zero a várias <code>Reservas</code> (0..*); se o voo deixar de existir, suas reservas perdem o sentido.</p>
+          `
+        },
+        'rel-heranca': {
+          badge: 'Generalização / Herança',
+          title: 'Operador / Aeroviario ──▷ Funcionario',
+          html: `
+            <p><strong>Tipo:</strong> <strong>Generalização</strong> (linha contínua com triângulo vazio apontando para <code>&lt;&lt;abstract&gt;&gt; Funcionario</code>).</p>
+            <p><strong>Por que não Implementação?</strong> Porque há herança de atributo (<code>nome</code>) e método concreto (<code>getNome()</code>), além do método abstrato <code>getCargo()</code>.</p>
+          `
+        },
+        'rel-voo-aerov': {
+          badge: 'Agregação (Losango Vazio)',
+          title: 'Voo ◇── "É tripulado por" ── Aeroviario',
+          html: `
+            <p><strong>Tipo:</strong> <strong>Agregação</strong> com losango vazio encostado em <code>Voo</code> e rótulo <em>"É tripulado por"</em>.</p>
+            <p><strong>Significado:</strong> O aeroviário tem ciclo de vida independente do voo (continua funcionário após o pouso e pode tripular vários voos).</p>
+          `
+        },
+        'rel-voo-aero': {
+          badge: 'Associações Simples Paralelas',
+          title: 'Voo ── "Parte de" / "Chega em" ── Aeroporto',
+          html: `
+            <p><strong>Tipo:</strong> Duas <strong>associações simples</strong> paralelas (linhas retas sem setas e sem losangos), diferenciadas pelos nomes <strong>"Parte de"</strong> e <strong>"Chega em"</strong>.</p>
+            <p><strong>No código:</strong> Materializadas nos atributos privados <code>__partida : Aeroporto</code> e <code>__destino : Aeroporto</code> dentro de <code>Voo</code>.</p>
+          `
+        }
+      };
+
+      const inspBadge = document.getElementById('inspector-badge');
+      const inspTitle = document.getElementById('inspector-title');
+      const inspBody = document.getElementById('inspector-body');
+      const clickableItems = document.querySelectorAll('.uml-node, .uml-rel');
+
+      clickableItems.forEach((item) => {
+        item.addEventListener('click', () => {
+          const key = item.getAttribute('data-info');
+          const data = inspectorData[key];
+          if (!data) return;
+
+          clickableItems.forEach((el) => el.classList.remove('uml-selected'));
+          item.classList.add('uml-selected');
+
+          inspBadge.textContent = data.badge;
+          inspTitle.textContent = data.title;
+          inspBody.innerHTML = data.html;
+        });
+      });
+
+      // 4. Botão Copiar (via textarea + execCommand para funcionar em iFrames)
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      let toastTimer;
+
+      function showToast(msg) {
+        toastMsg.textContent = msg;
+        toast.classList.remove('hidden');
+        toast.classList.add('flex');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.add('hidden');
+          toast.classList.remove('flex');
+        }, 2300);
+      }
+
+      function copyText(text) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+          showToast('Copiado para a área de transferência!');
+        } catch (e) {
+          showToast('Não foi possível copiar.');
+        }
+        document.body.removeChild(ta);
+      }
+
+      document.querySelectorAll('.copy-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const target = document.getElementById(btn.getAttribute('data-copy'));
+          if (target) copyText(target.innerText);
+        });
+      });
+
+      document.getElementById('copy-full-code').addEventListener('click', () => {
+        const fullCode = document.getElementById('full-python-code');
+        if (fullCode) copyText(fullCode.innerText);
+      });
+
+      // 5. Controles dos Roteiros: Fonte A+/A-, Cronômetro e Teleprompter
+      let fontSize = 16;
+      const speechBoxes = document.querySelectorAll('.speech-box');
+
+      function updateFont(delta) {
+        fontSize = Math.min(28, Math.max(14, fontSize + delta));
+        speechBoxes.forEach((box) => {
+          box.style.fontSize = fontSize + 'px';
+        });
+      }
+
+      document.getElementById('font-inc').addEventListener('click', () => updateFont(2));
+      document.getElementById('font-dec').addEventListener('click', () => updateFont(-2));
+      document.getElementById('tp-font-inc').addEventListener('click', () => updateFont(2));
+      document.getElementById('tp-font-dec').addEventListener('click', () => updateFont(-2));
+
+      const exitBar = document.getElementById('teleprompter-exit-bar');
+      document.getElementById('teleprompter-btn').addEventListener('click', () => {
+        document.body.classList.add('teleprompter-mode');
+        exitBar.classList.remove('hidden');
+        exitBar.classList.add('flex');
+        if (fontSize < 22) {
+          fontSize = 22;
+          updateFont(0);
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      document.getElementById('tp-exit-btn').addEventListener('click', () => {
+        document.body.classList.remove('teleprompter-mode');
+        exitBar.classList.add('hidden');
+        exitBar.classList.remove('flex');
+        fontSize = 16;
+        updateFont(0);
+      });
+
+      // Cronômetro Play/Pause/Reset
+      let secs = 0;
+      let timerId = null;
+      const timerDisp = document.getElementById('timer-display');
+      const timerStartBtn = document.getElementById('timer-start');
+
+      function renderTimer() {
+        const m = String(Math.floor(secs / 60)).padStart(2, '0');
+        const s = String(secs % 60).padStart(2, '0');
+        timerDisp.textContent = `${m}:${s}`;
+      }
+
+      timerStartBtn.addEventListener('click', () => {
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+          timerStartBtn.textContent = 'Play';
+          timerStartBtn.classList.replace('bg-amber-600', 'bg-emerald-600');
+        } else {
+          timerId = setInterval(() => {
+            secs++;
+            renderTimer();
+          }, 1000);
+          timerStartBtn.textContent = 'Pause';
+          timerStartBtn.classList.replace('bg-emerald-600', 'bg-amber-600');
+        }
+      });
+
+      document.getElementById('timer-reset').addEventListener('click', () => {
+        clearInterval(timerId);
+        timerId = null;
+        secs = 0;
+        renderTimer();
+        timerStartBtn.textContent = 'Play';
+        timerStartBtn.classList.remove('bg-amber-600');
+        timerStartBtn.classList.add('bg-emerald-600');
+      });
+
+      // 6. Acordeão das Perguntas da Banca
+      document.querySelectorAll('.faq-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const item = btn.closest('.faq-item');
+          const ans = item.querySelector('.faq-answer');
+          const icon = item.querySelector('.faq-icon');
+          const hidden = ans.classList.contains('hidden');
+          ans.classList.toggle('hidden', !hidden);
+          icon.classList.toggle('rotate-180', hidden);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
